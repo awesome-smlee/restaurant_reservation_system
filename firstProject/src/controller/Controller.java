@@ -1,8 +1,10 @@
 package controller;
 
 import java.util.HashMap;
+
 import java.util.Map;
 
+import service.CustomerService;
 import service.LoginService;
 import service.StoreService;
 import service.UserService;
@@ -18,6 +20,7 @@ public class Controller {
 	LoginService loginService = LoginService.getInstance(); // 로그인 
 	UserService userService = UserService.getInstance();    // 사용자
 	StoreService storeServie = StoreService.getInstance();  // 매장
+	CustomerService customerService = CustomerService.getInstance(); // 고객
 
 	// 실행
 	public static void main(String[] args) {
@@ -39,10 +42,13 @@ public class Controller {
 				view = loginService.login();
 				break;
 			case SIGNUP:
-				view = userService.resignUp();
+				view = userService.signUp();
 				break;
 			case STORE:
 				view = storeServie.createStore();
+				break;
+			case CUSTOMER:
+				view = customerService.list();
 				break;
 			}
 		}
