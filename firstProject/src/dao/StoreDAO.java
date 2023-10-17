@@ -26,6 +26,7 @@ public class StoreDAO {
 	public List<Map<String, Object>> getStoreInfo(String name) {
 		String sql = "SELECT STR_NAME,STR_TYPE,STR_TELNO,STR_ADDRESS,STR_OPEN,STR_CLOSE,STR_BRKSTRT,STR_BRKCLS,STR_CEO,STR_BN";
 		sql += " FROM STORES WHERE STR_NAME = '" + name +"' ";
+		sql += " ORDER BY STR_NAME,STR_TYPE,STR_TELNO,STR_ADDRESS,STR_OPEN,STR_CLOSE,STR_BRKSTRT,STR_BRKCLS,STR_CEO,STR_BN";
 		return jdbc.selectList(sql);
 	}
 	

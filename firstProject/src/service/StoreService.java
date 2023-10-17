@@ -1,11 +1,13 @@
 package service;
 
+import util.FormatUtil;
 import util.PrintUtil;
 import util.ScanUtil;
 import util.View;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,18 +41,41 @@ public class StoreService {
 		PrintUtil.printTitle("등록한 매장 조회");
 		String name = ScanUtil.nextLine("매장 이름 >> ");
 		
+		// 영문 컬럼명과 한글 컬럼명 대응
+		Map<String, String> colMapping = new HashMap<String, String>();
+		colMapping.put("STR_NAME", "매장명");
+		colMapping.put("STR_TYPE", "매장타입");
+		colMapping.put("STR_TELNO", "매장전화번호");
+		colMapping.put("STR_ADDRESS", "매장주소");
+		colMapping.put("STR_OPEN", "매장 오픈시간");
+		colMapping.put("STR_CLOSE", "매장 종료시간");
+		colMapping.put("STR_BRKSTRT", "브레이크타임 시작시간");
+		colMapping.put("STR_BRKCLS", "브레이크타임 종료시간");
+		colMapping.put("STR_CEO", "사업자");
+		colMapping.put("STR_BN", "사업자등록번호");
+		
 		List<Map<String, Object>> result = storeDao.getStoreInfo(name);
 		
+		int rowNum = 1;
 		
+		// 매장 정보가 담긴 SQL의 각 행과 컬럼을 순회하여 출력
 		if(result != null) {
-			for(Object ob : result) {
-				System.out.println(ob);
+			for(Map<String, Object> row : result) {
+				for(Map.Entry<String, Object> entry : row.entrySet()) {
+					String enColumn = entry.getKey();
+					String koColumn = colMapping.get(enColumn); // 영어 컬럼명을 한글로 변환
+					if(koColumn != null) {
+						Object value = entry.getValue();
+						System.out.println(rowNum + ". " + koColumn + " : " + value);
+						rowNum++;
+					}
+				}
 			}
 		} else if(result == null) {
 			System.out.println("매장 데이터가 존재하지 않습니다.");
 		}
 		
-		return View;
+		return View.STORE_INFO_DETAIL;
 	}
 
 	// 매장 등록
@@ -272,7 +297,7 @@ public class StoreService {
 		return View.STORE_INFO_DETAIL;
 	}
 
-	// 사용자로부터 번호를 입력받고 매장 타입 선택하는 메서드
+	// 사용자로부터 번호 입력받아 매장 타입 선택
 	public String getStoreType(int type) {
 		switch (type) {
 		case 1:
