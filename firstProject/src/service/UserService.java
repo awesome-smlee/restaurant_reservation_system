@@ -26,7 +26,7 @@ public class UserService {
 	// 정규표현식
 	String idPattern = "[a-z0-9]{5,20}";
 	String pwPattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{5,}$";
-	String tellNoPattern = "^(010-\\d{4}-\\d{4}|042-\\d{3}-\\d{4})$";
+	String tellNoPattern = "^(010-\\d{4}-\\d{4}|\\d{3}-\\d{3}-\\d{4})$";
 	String birthPattern = "^\\d{8}$";
 
 	// 회원가입
@@ -145,15 +145,15 @@ public class UserService {
 				Map<String, Object> result = userDao.getUserInfo(id);
 				if (id.matches(idPattern) && result == null) {
 					System.out.println("수정 가능한 아이디입니다.");
+					setString += " USERS_ID = '" + id + "', ";
 					break;
 				} else if (result != null) {
 					System.out.println("중복 된 아이디입니다. 다른 아이디를 입력하세요.");
 				} else {
 					System.out.println("아이디 형식이 올바르지 않습니다. 다시 입력하세요.");
 				}
-				setString += " USERS_ID = '" + id + "', ";
 			}
-		}
+		} 
 
 		// 비밀번호 수정
 		yesNo = ScanUtil.nextLine("비밀번호를 수정하시겠습니까? (y/n) >> ");
@@ -176,7 +176,7 @@ public class UserService {
 			String name = ScanUtil.nextLine("이름 >> ");
 			setString += " USERS_NAME = '" + name + "', ";
 		}
-
+ 
 		// 전화번호 수정
 		yesNo = ScanUtil.nextLine("전화번호를 수정하시겠습니까? (y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
@@ -189,7 +189,7 @@ public class UserService {
 					System.out.println("전화번호 형식이 올바르지 않습니다. 다시 입력하세요.");
 				}
 			}
-		}
+		} 
 
 		// 생년월일 수정
 		yesNo = ScanUtil.nextLine("생년월일을 수정하시겠습니까? (y/n)");
@@ -215,7 +215,8 @@ public class UserService {
 		if (result > 0) {
 			System.out.println("회원정보가 정상적으로 수정되었습니다.");
 		} else {
-			System.out.println("자료 수정에 실패했습니다.");
+			System.out.println("자료 수정에 실패했습니다. 다시 입력해주세요.");
+			return View.RESIGNUP;
 		}
 
 		return View.HOME;
