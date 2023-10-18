@@ -52,27 +52,16 @@ public class CustomerService {
 
 			String resTime = Integer.toString(ScanUtil.nextInt("예약 시간 >> "));
 
+			reservationDao.viewTable();
 			String tblNo = Integer.toString(ScanUtil.nextInt("테이블 번호 >> "));
-		
-		reservationDao.reserv(strNum); // 메뉴 리스트 보여주는 메서드
-			int orderMenu = ScanUtil.nextInt("주문할 메뉴를 선택하세요 >> ");
-			int param = orderMenu;
-			if(orderMenu == 0) {
-				System.out.println("잘못 입력하였습니다. 다시 선택해주세요.");
-				orderMenu = ScanUtil.nextInt("주문할 메뉴를 선택하세요 >> ");
-			}else {
-				int orderlist = orderMenuDao.orderList(param);
-			}
-
-			String resReq = Integer.toString(ScanUtil.nextInt("요청 사항 >> "));
-
-			List<Object> param1 = new ArrayList<Object>();
-			param1.add(resPer);
-			param1.add(resTime);
-			param1.add(tblNo);
-			param1.add(resReq);
-
-			return View.CUSTOMER;
+			
+			orderMenuDao.orderMenu(strNum);
+			
+			String resReq = ScanUtil.nextLine("요청사항을 입력해주세요. >> ");
+				reservationDao.reservation(resPer, resTime, tblNo, resReq);
+				orderMenuDao.updateResno(strNum);
+			
+			return View.RESERVATION;
 		}
 	}
 }

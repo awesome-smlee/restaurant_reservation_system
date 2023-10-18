@@ -1,9 +1,11 @@
 package dao;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import service.LoginService;
 import util.JDBCUtil;
+import util.ScanUtil;
 
 public class OrderMenuDAO {
 	private static OrderMenuDAO instance = null;
@@ -16,20 +18,18 @@ public class OrderMenuDAO {
 
 	JDBCUtil jdbc = JDBCUtil.getInstance();
 	LoginDAO loginDao = LoginDAO.getInstance();
+//	ReservationDAO reservationDao = ReservationDAO.getInstance();
+	
+	public List<Map<String, Object>> viewOrderMenu(){
+		String sql = "SELECT * FROM ORDERMENU";
+		return jdbc.selectList(sql);
+	}
 	
 	public List<Map<String, Object>> selectList(){
 		String sql = "SELECT * FROM MENU";
 		return jdbc.selectList(sql);
 	}
-//	
-//	public  Object menuNO(int i){
-//		 String sql = "SELECT SUBSTR(MENU_NO, 5, 6) AS MENU_NO FROM MENU WHERE SUBSTR(MENU_NO, 5, 6) LIKE '%\"+i+\"' ";
-//		    Map<String, Object> result = jdbc.selectOne(sql, i);
-//		if(result != null) {
-//			return result.get("MENU_NO");
-//		}else {
-//			return null;
-//		}	
+
 	public Map<String, Object> menuNo(int i){
 		return jdbc.selectOne("SELECT SUBSTR(MENU_NO, 5, 6) AS MENU_NO FROM MENU WHERE SUBSTR(MENU_NO, 5, 6) LIKE '%"+i+"'");
 	}
@@ -39,21 +39,71 @@ public class OrderMenuDAO {
 				     + "WHERE A.STR_NO = B.STR_NO " + "AND  B.STR_NUM = '"+strNum+"'");
 	}
 	
-	public int orderList(int param){
-		StringBuffer sb = new StringBuffer();
-		sb.append("INSERT INTO ORDERMENU(OM_NAME, OM_PRICE) ");
-		sb.append("SELECT MENU_NAME, MENU_PRICE ");
-		sb.append("FROM MENU ");
-		sb.append("WHERE SUBSTR(MENU_NO,4,6) = ?");
-		String sql = sb.toString();
-		return jdbc.update(sql, param);
-//		return jdbc.selectList("INSERT INTO ORDERMENU(OM_NAME, OM_PRICE) "
-//								+ "SELECT MENU_NAME, MENU_PRICE "
-//								+ "FROM MENU "
-//								+ "WHERE SUBSTR(MENU_NO,4,6) = '?");
+	public void insertOrder(int StrNum, int param, int strNum){
+		String sql = "INSERT INTO ORDERMENU(OM_NAME, OM_PRICE, OM_QTY, STR_NUM) " +
+				     "SELECT MENU_NAME, MENU_PRICE, 1 , ?" +
+				     "FROM MENU " +
+				     "WHERE SUBSTR(MENU_NO, 5,6) = ? AND STR_NUM = ? ";
+		jdbc.updateOne(sql,StrNum, param, strNum);
 	}
+//	public void updateResno(String resNo, int strNum) {
+//		String sql = "UPDATE ORDERMENU SET RES_NO = ? WHERE STR_NUM = ?";
+//		jdbc.updateOrdermenu(sql, resNo, strNum);
+//	}
+	
+	public void updateResno(int strNum) {
+		String sql = "INSERT INTO ORDERMENU(RES_NO) " +
+					 "SELECT RES_NO " +
+					 "FROM RESERVATION " +
+					 "WHERE STR_NUM = ?";
+		jdbc.updateOne(sql, strNum);
+	}
+	
+	public List<Map<String, Object>> selectOrderList(){
+		String sql = "SELECT * FROM ORDERMENU";
+		return jdbc.selectlist(sql, 0);
+	}
+	public void menuList(int strNum) {
+		List<Map<String, Object>> result = menu(strNum);
+		for (int i = 0; i < result.size(); i++) {
+			Map<String, Object> res = result.get(i);
+			Map<String, Object> menuNumMap = menuNo(i+1);
+			System.out.print(menuNumMap.get("MENU_NO")+".");
+			System.out.println(res.get("MENU_NAME") + ":" + res.get("MENU_PRICE"));
+			System.out.println(" -"+res.get("MENU_DESC"));
+		}
+	}
+	public void selectMenu(int orderMenu, int strNum, int StrNum) {
+		while(true) {
+			if(orderMenu == 0) {
+				System.out.println("잘못 입력하였습니다. 다시 선택해주세요.");
+				orderMenu = ScanUtil.nextInt("주문할 메뉴를 선택하세요 >> ");
+			}else {
+				int param = orderMenu;
+				StrNum = strNum;
+				insertOrder(StrNum, param, strNum);
+			}
+			String yesNo = ScanUtil.nextLine("메뉴를 추가하시겠습니까?(y/n) >> ");
+			if(yesNo.equalsIgnoreCase("n")) {
+				break;
+			}else if(!yesNo.equalsIgnoreCase("y")) {
+				orderMenu = ScanUtil.nextInt("잘못 입력하였습니다. 다시 선택해주세요. >> ");
+			}else {
+				orderMenu = ScanUtil.nextInt("주문할 메뉴를 선택하세요 >> ");
+			}
+		}
+	}
+	
+	public void orderMenu(int strNum) {
+		menuList(strNum);
+		int orderMenu = ScanUtil.nextInt("주문하실 메뉴를 선택하세요 >> ");
+		int StrNum = strNum;
+		selectMenu(orderMenu, strNum, StrNum);
+	}
+}
 	
 	
 	
 
-}
+
+

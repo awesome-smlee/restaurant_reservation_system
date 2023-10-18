@@ -23,8 +23,11 @@ public enum View {
     STORE_TABLE_MGMT("테이블관리"),
     
     // 고객
-    CUSTOMER("고객");
-    
+    CUSTOMER("고객"),
+	
+	// 예약 현황
+	RESERVATION("예약 현황");
+   
 	View(String title){}
 	
 }

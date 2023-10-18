@@ -1,10 +1,14 @@
 package dao;
 
+import java.sql.Connection;
 import java.util.List;
 
 import java.util.Map;
+import java.util.Random;
 
 import util.JDBCUtil;
+import util.ScanUtil;
+import util.View;
 
 public class ReservationDAO {
 	private static ReservationDAO instance = null;
@@ -17,47 +21,60 @@ public class ReservationDAO {
 	JDBCUtil jdbc = JDBCUtil.getInstance();
 	OrderMenuDAO orderMenuDao = OrderMenuDAO.getInstance();
 	
-	public List<Map<String, Object>> reservation(String resPer, String resTime, String tblNo, String resReq){
-		return jdbc.selectList("UPDATE TABLE RESERVATION SET" 
-				+" RES_PER = '"+resPer+"'"
-           		+" RES_TIME = '"+resTime+"' AND"
-           		+" TBL_NO = '"+tblNo+"' AND"
-           		+" RES_REQ = '"+resReq+"'");
-	}
-	public int reservNO(List<Object> param) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("UPDATE RESERVATION SET RES_NO = ");
-		sb.append("(SELECT DBMS_RANDOM.STRING('X',20) FROM DUAL)");
-		sb.append("WHERE USER_ID = ?");
-		
-		String sql = sb.toString();
-		return jdbc.update(sql, param);
-	}
-	
-	
-	public List<Map<String, Object>> reserv(List<Object> param) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("INSERT INTO RESERVATION (RES_PER, RES_TIME, TBL_NO, RES_REQ)");
-		sb.append("VALUES(?,?,?,?)");
-		
-		String sql = sb.toString();
-		return jdbc.selectOnes(sql, param);
-	}
 	
 	public List<Map<String, Object>> selectList(){
 		String sql = "SELECT * FROM ORDERMENU";
 		return jdbc.selectList(sql);
 	}
-	
-	public void reserv(int strNum) {
-		List<Map<String, Object>> results = orderMenuDao.menu(strNum);
-		for (int i = 0; i < results.size(); i++) {
-			Map<String, Object> res = results.get(i);
-			Map<String, Object> menuNumMap = orderMenuDao.menuNo(i);
-			System.out.print(orderMenuDao.menuNo(i+1));
-			System.out.println(res.get("MENU_NAME") + ":" + res.get("MENU_PRICE"));
-			System.out.println(" -"+res.get("MENU_DESC"));
-		}
-		
+	public Map<String, Object> viewTotal(){
+		String sql = "SELECT * FROM TOTAL_RESERVATION";
+		return jdbc.selectOne(sql);
 	}
+	public List<Map<String, Object>> tables(){
+		String sql = "SELECT TBL_NO, TBL_SEAT FROM TABLES";
+		return jdbc.selectList(sql);
+	}
+//	public List<Map<String, Object>> viewreservation(String resNo){
+//		String sql = "SELECT * FROM RESERVATION WHERE RES_NO = '"+resNo+"'";
+//		return jdbc.selectList(sql);
+//	}
+	
+	public void viewTable() {
+		List<Map<String, Object>> result = tables();
+		for (int i = 0; i < result.size(); i++) { 
+			Map<String, Object> res = result.get(i);
+			System.out.print(res.get("TBL_NO") + ".("+res.get("TBL_SEAT")+"인석)");
+			System.out.println();
+		}
+	}
+	
+	public String makeResNo() {
+		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		Random random = new Random();
+		StringBuilder randomString = new StringBuilder();
+		
+		for(int i=0; i< 5; i++) {
+				int idx = random.nextInt(characters.length());
+				randomString.append(characters.charAt(idx));
+		}
+		return randomString.toString();
+	}
+	
+	public void reservation(String resPer, String resTime, String tblNo, String resReq) {
+		String sql = "INSERT INTO RESERVATION(RES_NO, RES_PER, RES_TIME, TBL_NO, RES_REQ) VALUES (RES_NO_SEQ.NEXTVAL, ?, ?, ?, ? )";
+		jdbc.updateOne(sql, resPer, resTime, tblNo, resReq);
+	}
+	
+	public View reservationList() {
+		ScanUtil.nextLine("주문 예약 현황");
+//		List<Map<String,Object>> resResult = viewreservation(resNo);
+		List<Map<String,Object>> orderResult = orderMenuDao.viewOrderMenu();
+		Map<String,Object> viewTotalMap = viewTotal();
+		System.out.print("-" + viewTotalMap.get("RES_NO") + viewTotalMap.get("OM_NAME") +
+						 viewTotalMap.get("SAL(OM_QTY)") + "개" + "/" + viewTotalMap.get("SAL(OM_PRICE)")+"원"); 	
+		System.out.println("\n-요청사항 :" +viewTotalMap.get("RES_REQ"));
+		return View.CUSTOMER;
+	}
+	
+	
 }

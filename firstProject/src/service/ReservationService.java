@@ -33,8 +33,6 @@ public class ReservationService {
 		
 		String tblNo = Integer.toString(ScanUtil.nextInt("테이블 번호 >> "));
 		
-		reservationDao.reserv(strNum); // 메뉴 리스트 보여주는 메서드
-		
 		String orderMenu = Integer.toString(ScanUtil.nextInt("주문할 매뉴를 선택하세요 >> "));
 		
 		String resReq = Integer.toString(ScanUtil.nextInt("요청 사항 >> "));
