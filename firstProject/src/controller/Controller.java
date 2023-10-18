@@ -47,7 +47,7 @@ public class Controller {
 //				view = userService.signUp();
 //				break;
 			case STORE:
-				view = menuService.updateMenu();
+				view = menuService.deleteMenu();
 				break;
 //			case CUSTOMER:
 //				view = customerService.list();

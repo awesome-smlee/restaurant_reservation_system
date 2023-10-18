@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import dao.MenuDAO;
+import util.FormatUtil;
 import util.JDBCUtil;
 import util.PrintUtil;
 import util.ScanUtil;
@@ -23,6 +24,30 @@ public class MenuService {
 	MenuDAO menuDao = MenuDAO.getInstance();
 
 	// 메뉴 조회
+	public View getMenuInfo() {
+		
+		PrintUtil.printTitle("메뉴 조회");
+		String strName = ScanUtil.nextLine("조회할 매장 >> ");
+		List<Map<String, Object>> result = menuDao.getMenuInfo(strName);
+		if (result != null) {
+		    if (result.size() > 0) {
+		        for (int i = 0; i < result.size(); i++) {
+		            Map<String, Object> map = result.get(i);
+		            System.out.println("메뉴 " + (i + 1) + ":");
+		            System.out.println("1. 메뉴명: " + map.get("MENU_NAME"));
+		            System.out.println("2. 메뉴 설명: " + map.get("MENU_DESC"));
+		            System.out.println("3. 메뉴 가격: " + map.get("MENU_PRICE") + "원");
+		            System.out.println("=====================================");
+		        }
+		    } else {
+		        System.out.println("매장 데이터가 존재하지 않습니다.");
+		    }
+		} else {
+		    System.out.println("데이터를 가져오는 데 문제가 발생했습니다.");
+		}
+		
+		return View.STORE;
+	}
 	
 	// 메뉴 등록
 	public View createMenu() {
@@ -138,4 +163,19 @@ public class MenuService {
 		return View.STORE;
 	}
 	
+	// 메뉴 삭제
+	public View deleteMenu() {
+		PrintUtil.printTitle("메뉴 삭제");
+		
+		String menuName = ScanUtil.nextLine("삭제할 메뉴명 >> ");
+		int result = menuDao.deleteMenu(menuName);
+		
+		if(result > 0) {
+			System.out.println("메뉴가 정상적으로 삭제되었습니다.");
+		} else {
+			System.out.println("메뉴 삭제에 실패했습니다.");
+		}
+		
+		return View;
+	}
 }

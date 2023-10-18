@@ -65,13 +65,13 @@ public class PrintUtil {
 	public static void printTitle(String title) {
 		System.out.println();
 		printDoubleLine();
-		System.out.println();
 		System.out.println("[" + title + "]");
+		printDoubleLine();
 		System.out.println();
 	}
 	
 	// 구분선(더블라인)
 	public static void printDoubleLine() {
-		System.out.println("〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓");
+		System.out.println("=====================================");
 	}
 }

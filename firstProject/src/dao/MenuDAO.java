@@ -20,6 +20,14 @@ public class MenuDAO {
 		String sql = "SELECT * FROM STR_MENU_VIEW WHERE STR_NAME = '"+ strName+"' ";
 		return jdbc.selectOne(sql);
 	}
+
+	// 메뉴 조회
+	public List<Map<String, Object>> getMenuInfo(String strName) {
+		String sql = "SELECT MENU_NAME, MENU_DESC, MENU_PRICE " +
+                "FROM MENU " +
+                "WHERE STR_NO = (SELECT STR_NO FROM STORES WHERE STR_NAME = '"+strName+"' ) ";
+		return jdbc.selectList(sql);
+	}
 	
 	// 메뉴 등록
 	public int createStore(List<Object> param) {
@@ -38,10 +46,12 @@ public class MenuDAO {
 		sql += " WHERE MENU.STR_NO IN (SELECT STR_NO FROM STORES WHERE STR_NAME = ? AND MENU_NAME = ?) ";
 		
 		return jdbc.update(sql, param);
-		
-//		UPDATE MENU
-//		SET MENU_NAME = '뿅뿅마라떡반', MENU_PRICE = 99999
-//		WHERE MENU.STR_NO IN (SELECT STR_NO FROM STORES WHERE STR_NAME = '떡반집' AND MENU_NAME = '마라떡반');
+	}
+	
+	// 메뉴 삭제
+	public int deleteMenu(String menuName) {
+		String sql = "DELETE FROM MENU WHERE MENU_NAME = '"+menuName+"'" ;
+		return jdbc.update(sql);
 	}
 }
 
