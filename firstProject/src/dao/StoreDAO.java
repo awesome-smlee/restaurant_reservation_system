@@ -42,7 +42,7 @@ public class StoreDAO {
 	
 	// 매장 수정
 	public int updateStore(String setString, List<Object> param) {
-		String sql = "UPDATE STORES SET ";
+		String sql = " UPDATE STORES SET ";
 		sql += setString;
 		sql += " WHERE STR_NAME = ? ";
 		

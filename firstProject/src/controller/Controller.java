@@ -6,6 +6,7 @@ import java.util.Map;
 
 import service.CustomerService;
 import service.LoginService;
+import service.MenuService;
 import service.StoreService;
 import service.UserService;
 import util.PrintUtil;
@@ -21,6 +22,7 @@ public class Controller {
 	UserService userService = UserService.getInstance();    // 사용자
 	StoreService storeServie = StoreService.getInstance();  // 매장
 	CustomerService customerService = CustomerService.getInstance(); // 고객
+	MenuService menuService = MenuService.getInstance(); // [매장] 메뉴
 
 	// 실행
 	public static void main(String[] args) {
@@ -41,15 +43,15 @@ public class Controller {
 			case LOGIN:
 				view = loginService.login();
 				break;
-			case SIGNUP:
-				view = userService.signUp();
-				break;
+//			case SIGNUP:
+//				view = userService.signUp();
+//				break;
 			case STORE:
-				view = storeServie.createStore();
+				view = menuService.updateMenu();
 				break;
-			case CUSTOMER:
-				view = customerService.list();
-				break;
+//			case CUSTOMER:
+//				view = customerService.list();
+//				break;
 			}
 		}
 	}
@@ -66,7 +68,9 @@ public class Controller {
 		case 1:
 			return View.LOGIN;
 		case 2:
-			return View.SIGNUP;
+			return View.STORE;
+//		case 2:
+//			return View.SIGNUP;
 		default:
 			return View.HOME;
 		}

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import dao.StoreDAO;
 
@@ -40,41 +41,35 @@ public class StoreService {
 		
 		PrintUtil.printTitle("등록한 매장 조회");
 		String name = ScanUtil.nextLine("매장 이름 >> ");
-		
-		// 영문 컬럼명과 한글 컬럼명 대응
-		Map<String, String> colMapping = new HashMap<String, String>();
-		colMapping.put("STR_NAME", "매장명");
-		colMapping.put("STR_TYPE", "매장타입");
-		colMapping.put("STR_TELNO", "매장전화번호");
-		colMapping.put("STR_ADDRESS", "매장주소");
-		colMapping.put("STR_OPEN", "매장 오픈시간");
-		colMapping.put("STR_CLOSE", "매장 종료시간");
-		colMapping.put("STR_BRKSTRT", "브레이크타임 시작시간");
-		colMapping.put("STR_BRKCLS", "브레이크타임 종료시간");
-		colMapping.put("STR_CEO", "사업자");
-		colMapping.put("STR_BN", "사업자등록번호");
-		
 		List<Map<String, Object>> result = storeDao.getStoreInfo(name);
 		
-		int rowNum = 1;
-		
-		// 매장 정보가 담긴 SQL의 각 행과 컬럼을 순회하여 출력
 		if(result != null) {
-			for(Map<String, Object> row : result) {
-				for(Map.Entry<String, Object> entry : row.entrySet()) {
-					String enColumn = entry.getKey();
-					String koColumn = colMapping.get(enColumn); // 영어 컬럼명을 한글로 변환
-					if(koColumn != null) {
-						Object value = entry.getValue();
-						System.out.println(rowNum + ". " + koColumn + " : " + value);
-						rowNum++;
-					}
-				}
+			for(int i=0; i<result.size(); i++) {
+				Map<String, Object> map = result.get(i);
+				System.out.println();
+				System.out.print("1.매장명 : ");
+				System.out.println(map.get("STR_NAME"));
+				System.out.print("2.매장 타입 : ");
+				System.out.println(map.get("STR_TYPE"));
+				System.out.print("3.매장 전화번호 : ");
+				System.out.println(map.get("STR_TELNO"));
+				System.out.print("4.매장 주소 : ");
+				System.out.println(map.get("STR_ADDRESS"));
+				System.out.print("5.매장 운영시간 : ");
+				System.out.println(FormatUtil.formatTime((String) map.get("STR_OPEN")) 
+						+ " ~ " + FormatUtil.formatTime((String) map.get("STR_CLOSE")));
+				System.out.print("6.브레이크 타임 : ");
+				System.out.println(FormatUtil.formatTime((String) map.get("STR_BRKSTRT"))
+						+ " ~ " + FormatUtil.formatTime((String) map.get("STR_BRKCLS")));
+				System.out.print("7.사업자명 : ");
+				System.out.println(map.get("STR_CEO"));
+				System.out.print("8.사업자 등록번호 : ");
+				System.out.println(map.get("STR_BN"));
 			}
 		} else if(result == null) {
 			System.out.println("매장 데이터가 존재하지 않습니다.");
 		}
-		
+	
 		return View.STORE_INFO_DETAIL;
 	}
 
@@ -168,7 +163,7 @@ public class StoreService {
 		String setString = "";
 		String yesNo = "";
 
-		String newName = ScanUtil.nextLine("현재 매장 이름 >> ");
+		String newName = ScanUtil.nextLine("매장 이름 >> ");
 		Map<String, Object> getName = storeDao.getStoreNameInfo(newName);
 		
 		// 수정 가능한 매장인지 판별
@@ -193,7 +188,7 @@ public class StoreService {
 						setString += " STR_NAME = '" + name + "', ";
 						break;
 					} else if (result != null) {
-						System.out.println("중복 된 매장명입니다. 다른 매장명을 입력하세요.");
+						System.out.println("중복된 매장명입니다. 다른 매장명을 입력하세요.");
 					}
 					
 				} break;
