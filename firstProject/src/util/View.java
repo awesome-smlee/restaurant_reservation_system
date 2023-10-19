@@ -20,10 +20,14 @@ public enum View {
     STORE_MENU_UPDATE("메뉴정보 수정"),
     STORE_MENU_DELETE("메뉴정보 삭제"),
 	
-    STORE_TABLE_MGMT("테이블관리"),
+    STORE_TABLE_LIST("테이블 리스트"),
+    STORE_TABLE_INSERT("테이블 등록"),
+    STORE_TABLE_UPDATE("테이블 수정"),
+    STORE_TABLE_DELETE("테이블 삭제"),
     
     // 고객
-    CUSTOMER("고객");
+    CUSTOMER("고객"),
+	RESERVATION("예약 현황");
     
 	View(String title){}
 	

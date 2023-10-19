@@ -7,7 +7,9 @@ import java.util.Map;
 import service.CustomerService;
 import service.LoginService;
 import service.MenuService;
+import service.ReservationService;
 import service.StoreService;
+import service.TableService;
 import service.UserService;
 import util.PrintUtil;
 import util.ScanUtil;
@@ -22,7 +24,9 @@ public class Controller {
 	UserService userService = UserService.getInstance();    // 사용자
 	StoreService storeServie = StoreService.getInstance();  // 매장
 	CustomerService customerService = CustomerService.getInstance(); // 고객
-	MenuService menuService = MenuService.getInstance(); // [매장] 메뉴
+	ReservationService reservationService = ReservationService.getInstance();
+	MenuService menuService = MenuService.getInstance();    // [매장] 메뉴
+	TableService tableService = TableService.getInstance(); // [매장] 테이블식탁
 
 	// 실행
 	public static void main(String[] args) {
@@ -47,11 +51,19 @@ public class Controller {
 //				view = userService.signUp();
 //				break;
 			case STORE:
-				view = menuService.deleteMenu();
+				view = tableService.getTableInfo();
 				break;
+//--------------------------------------------------
+//			case STORE:
+//				view = storeServie.createStore();
+//				break;
 //			case CUSTOMER:
 //				view = customerService.list();
 //				break;
+//			case RESERVATION:
+//				view = reservationService.reservationList();
+				
+				
 			}
 		}
 	}

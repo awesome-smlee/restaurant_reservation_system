@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import dao.MenuDAO;
-import util.FormatUtil;
-import util.JDBCUtil;
 import util.PrintUtil;
 import util.ScanUtil;
 import util.View;

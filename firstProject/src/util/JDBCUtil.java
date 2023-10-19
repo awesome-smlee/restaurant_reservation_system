@@ -23,7 +23,7 @@ public class JDBCUtil {
 		return instance;
 	}
 	private String url = "jdbc:oracle:thin:@localhost:1521:xe";
-	private String user = "pc07";
+	private String user = "project1st";
 	private String pw = "java";
 	
 	private Connection conn = null;
@@ -38,6 +38,33 @@ public class JDBCUtil {
 			for(int i = 0; i < param.size(); i++) {
 				ps.setObject(i + 1, param.get(i));
 			}
+			rs = ps.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int columnCount = rsmd.getColumnCount();
+			while(rs.next()) {
+				if(result == null) result = new ArrayList<>();
+				Map<String, Object> row = new HashMap<>();
+				for(int i = 1; i <= columnCount; i++) {
+					String key = rsmd.getColumnLabel(i);
+					Object value = rs.getObject(i);
+					row.put(key, value);
+				}
+				result.add(row);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(rs != null) try { rs.close(); } catch(Exception e) {}
+			if(ps != null) try { ps.close(); } catch(Exception e) {}
+			if(conn != null) try { conn.close(); } catch(Exception e) {}
+		}
+		return result;
+	}
+	public List<Map<String, Object>> selectlist(String sql, int param){
+		List<Map<String, Object>> result = null;
+		try {
+			conn = DriverManager.getConnection(url, user, pw);
+			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int columnCount = rsmd.getColumnCount();
@@ -159,9 +186,114 @@ public class JDBCUtil {
 			result = ps.executeUpdate();
 			
 		}catch(SQLException e) {
+		}finally {
+			if(rs != null) try { rs.close(); } catch(Exception e) {}
+			if(ps != null) try { ps.close(); } catch(Exception e) {}
+			if(conn != null) try { conn.close(); } catch(Exception e) {}
+		}
+		return result;
+	}
+	public void updateOrdermenuResno(String sql, String resNo, int strNum) {
+		
+		try {
+			conn = DriverManager.getConnection(url, user, pw);
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, resNo);
+			ps.setInt(2, strNum);
+			int rowsAffected = ps.executeUpdate();
+			if(rowsAffected > 0) {
+			}else {
+				System.out.println("예약번호를 등록하는데 실패하였습니다.");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(ps != null) try { ps.close(); } catch(Exception e) {}
+			if(conn != null) try { conn.close(); } catch(Exception e) {}
+		}
+	}
+	public void updateReservList(String sql,String resNo, int resPer, String resTime, int tblNo, String resReq, int strNum){
+
+		try {
+			conn = DriverManager.getConnection(url, user, pw);
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, resNo);
+			ps.setInt(2, resPer);
+			ps.setString(3, resTime);
+			ps.setInt(4, tblNo);
+			ps.setString(5, resReq);
+			ps.setInt(6, strNum);
+			int rowsAffected = ps.executeUpdate();
+			if(rowsAffected > 0) {
+				System.out.println("예약이 완료되었습니다.");
+			}else {
+				System.out.println("예약에 실패했습니다.");
+			}
+		}catch(SQLException e) {
 			e.printStackTrace();
 		}finally {
 			if(rs != null) try { rs.close(); } catch(Exception e) {}
+			if(ps != null) try { ps.close(); } catch(Exception e) {}
+			if(conn != null) try { conn.close(); } catch(Exception e) {}
+		}
+	}
+	public void selectResNo(String sql,String resNo){
+
+		try {
+			conn = DriverManager.getConnection(url, user, pw);
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, resNo);
+			int rowsAffected = ps.executeUpdate();
+			if(rowsAffected > 0) {
+				System.out.println("예약이 완료되었습니다.");
+			}else {
+				System.out.println("예약에 실패했습니다.");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(rs != null) try { rs.close(); } catch(Exception e) {}
+			if(ps != null) try { ps.close(); } catch(Exception e) {}
+			if(conn != null) try { conn.close(); } catch(Exception e) {}
+		}
+	}
+	public List<Map<String, Object>> updateOrderlist(String sql, int StrNum, int param, int strNum){
+		List<Map<String, Object>> result = null;
+		try {
+			conn = DriverManager.getConnection(url, user, pw);
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, StrNum);
+			ps.setInt(2, param);
+			ps.setInt(3, strNum);
+			int rowsAffected = ps.executeUpdate();
+				if(rowsAffected > 0) {
+					System.out.println("주문이 성공적으로 추가되었습니다.");
+				}else {
+					System.out.println("주문 등록에 실패하였습니다.");
+				}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(ps != null) try { ps.close(); } catch(Exception e) {}
+			if(conn != null) try { conn.close(); } catch(Exception e) {}
+		}
+		return result;
+	}
+	public List<Map<String, Object>> updateOne(String sql, int strNum){
+		List<Map<String, Object>> result = null;
+		try {
+			conn = DriverManager.getConnection(url, user, pw);
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, strNum);
+			int rowsAffected = ps.executeUpdate();
+				if(rowsAffected > 0) {
+					System.out.println("주문이 성공적으로 추가되었습니다.");
+				}else {
+					System.out.println("주문 등록에 실패하였습니다.");
+				}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
 			if(ps != null) try { ps.close(); } catch(Exception e) {}
 			if(conn != null) try { conn.close(); } catch(Exception e) {}
 		}
@@ -282,4 +414,30 @@ public class JDBCUtil {
 		}
 		return row;
 	}
+	public Map<String, Object> selectOne(String sql, String resNo){
+		Map<String, Object> row = null;
+		try {
+			conn = DriverManager.getConnection(url, user, pw);
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int columnCount = rsmd.getColumnCount();
+			while(rs.next()) {
+				row = new HashMap<>();
+				for(int i = 1; i <= columnCount; i++) {
+					String key = rsmd.getColumnLabel(i);
+					Object value = rs.getObject(i);
+					row.put(key,value);
+				}
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(rs != null) try {  rs.close();  } catch (Exception e) { }
+			if(ps != null) try {  ps.close();  } catch (Exception e) { }
+			if(conn != null) try { conn.close(); } catch (Exception e) { }
+		}
+		return row;
+	}
+		
 }

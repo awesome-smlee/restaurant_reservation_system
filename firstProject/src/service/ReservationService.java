@@ -1,52 +1,46 @@
 package service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import dao.CustomerDAO;
 import dao.OrderMenuDAO;
 import dao.ReservationDAO;
-import util.JDBCUtil;
 import util.PrintUtil;
-import util.ScanUtil;
 import util.View;
 
 public class ReservationService {
 	private static ReservationService instance = null;
-	private ReservationService () {}
+
+	private ReservationService() {
+	}
+
 	public static ReservationService getInstance() {
-		if(instance == null) instance = new ReservationService();
+		if (instance == null)
+			instance = new ReservationService();
 		return instance;
 	}
+
 	CustomerService customerService = CustomerService.getInstance();
 	ReservationDAO reservationDao = ReservationDAO.getInstance();
 	OrderMenuDAO orderMenuDao = OrderMenuDAO.getInstance();
-	
-//	
-	public View res(int strNum) {
-		PrintUtil.printTitle("예약하기");
-		
-		String resPer = Integer.toString(ScanUtil.nextInt("인원 수 >> "));
-		
-		String resTime = Integer.toString(ScanUtil.nextInt("예약 시간 >> "));
-		
-		String tblNo = Integer.toString(ScanUtil.nextInt("테이블 번호 >> "));
-		
-		reservationDao.reserv(strNum); // 메뉴 리스트 보여주는 메서드
-		
-		String orderMenu = Integer.toString(ScanUtil.nextInt("주문할 매뉴를 선택하세요 >> "));
-		
-		String resReq = Integer.toString(ScanUtil.nextInt("요청 사항 >> "));
-		
-		List<Object> param1 = new ArrayList<Object>();
-		param1.add(resPer);
-		param1.add(resTime);
-		param1.add(tblNo);
-		param1.add(resReq);
-		
-		
-	return View.CUSTOMER;	
+
+	public View reservationList() {
+		PrintUtil.printTitle("주문 예약 현황");
+		List<Map<String, Object>> result = reservationDao.totalMenuStateList();
+		Map<String, Object> res = reservationDao.viewReservation();
+		System.out.println("- 예약번호 : " + res.get("RES_NO"));
+		String resNo = (String) res.get("RES_NO");
+		System.out.println("- 주문 내역  ");
+		List<Map<String, Object>> result2 = reservationDao.ResnoOrderList(resNo);
+		for (int i = 0; i < result2.size(); i++) {
+			Map<String, Object> rs = result2.get(i);
+			System.out.println(
+					"   " + rs.get("OM_NAME") + " " + rs.get("TOTAL_QTY") + "개" + " / " + rs.get("TOTAL_PRICE") + "원");
+		}
+		System.out.println("- 요청사항 : " + reservationDao.viewReservation().get("RES_REQ"));
+		System.out.println("--------------------------------");
+		System.out.println("- 총 금액 : " + reservationDao.totalPriceList(resNo).get("TOTAL_PRICE_SUM")+"원");
+		return View.CUSTOMER;
 	}
-	
+
 }

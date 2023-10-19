@@ -1,11 +1,8 @@
 package service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import controller.Controller;
 import dao.CustomerDAO;
 import dao.OrderMenuDAO;
 import dao.ReservationDAO;
@@ -48,31 +45,23 @@ public class CustomerService {
 		} else {
 			PrintUtil.printTitle("예약하기");
 
-			String resPer = Integer.toString(ScanUtil.nextInt("인원 수 >> "));
+			int resPer = ScanUtil.nextInt("인원 수 >> ");
 
 			String resTime = Integer.toString(ScanUtil.nextInt("예약 시간 >> "));
 
-			String tblNo = Integer.toString(ScanUtil.nextInt("테이블 번호 >> "));
-		
-		reservationDao.reserv(strNum); // 메뉴 리스트 보여주는 메서드
-			int orderMenu = ScanUtil.nextInt("주문할 메뉴를 선택하세요 >> ");
-			int param = orderMenu;
-			if(orderMenu == 0) {
-				System.out.println("잘못 입력하였습니다. 다시 선택해주세요.");
-				orderMenu = ScanUtil.nextInt("주문할 메뉴를 선택하세요 >> ");
-			}else {
-				int orderlist = orderMenuDao.orderList(param);
-			}
+			reservationDao.viewTable(strNum); // 테이블 번호 보여주는 메서드
+			int tblNo = ScanUtil.nextInt("테이블 번호 >> ");
 
-			String resReq = Integer.toString(ScanUtil.nextInt("요청 사항 >> "));
+			orderMenuDao.orderMenu(strNum); // 주문 메서드
 
-			List<Object> param1 = new ArrayList<Object>();
-			param1.add(resPer);
-			param1.add(resTime);
-			param1.add(tblNo);
-			param1.add(resReq);
+			String resReq = ScanUtil.nextLine("요청사항을 입력해주세요. >> ");
 
-			return View.CUSTOMER;
+			// 예약 번호 생성
+			reservationDao.makeResNo();
+			String resNo = reservationDao.makeResNo();
+			reservationDao.generateResNo(resNo, resPer, resTime, tblNo, resReq, strNum);
+
+			return View.RESERVATION;
 		}
 	}
 }
