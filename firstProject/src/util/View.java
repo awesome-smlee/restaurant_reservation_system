@@ -29,6 +29,8 @@ public enum View {
     CUSTOMER("고객"),
 	RESERVATION("예약 현황");
     
+	// 예약 현황
+   
 	View(String title){}
 	
 }

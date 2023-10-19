@@ -1,11 +1,14 @@
 package dao;
 
+import java.sql.Connection;
 import java.util.List;
 
 import java.util.Map;
 import java.util.Random;
 
 import util.JDBCUtil;
+import util.ScanUtil;
+import util.View;
 
 public class ReservationDAO {
 	private static ReservationDAO instance = null;
