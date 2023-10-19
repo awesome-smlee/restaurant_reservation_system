@@ -8,7 +8,11 @@ import dao.OrderMenuDAO;
 import dao.ReservationDAO;
 import service.CustomerService;
 import service.LoginService;
+<<<<<<< HEAD
 import service.ReservationService;
+=======
+import service.MenuService;
+>>>>>>> branch 'master' of https://github.com/awesome-smlee/newFirstProject.git
 import service.StoreService;
 import service.UserService;
 import util.PrintUtil;
@@ -24,7 +28,11 @@ public class Controller {
 	UserService userService = UserService.getInstance();    // 사용자
 	StoreService storeServie = StoreService.getInstance();  // 매장
 	CustomerService customerService = CustomerService.getInstance(); // 고객
+<<<<<<< HEAD
 	ReservationService reservationService = ReservationService.getInstance();
+=======
+	MenuService menuService = MenuService.getInstance(); // [매장] 메뉴
+>>>>>>> branch 'master' of https://github.com/awesome-smlee/newFirstProject.git
 
 	// 실행
 	public static void main(String[] args) {
@@ -45,17 +53,23 @@ public class Controller {
 			case LOGIN:
 				view = loginService.login();
 				break;
-			case SIGNUP:
-				view = userService.signUp();
-				break;
+//			case SIGNUP:
+//				view = userService.signUp();
+//				break;
 			case STORE:
-				view = storeServie.createStore();
+				view = menuService.deleteMenu();
 				break;
+<<<<<<< HEAD
 			case CUSTOMER:
 				view = customerService.list();
 				break;
 			case RESERVATION:
 				view = reservationService.reservationList();
+=======
+//			case CUSTOMER:
+//				view = customerService.list();
+//				break;
+>>>>>>> branch 'master' of https://github.com/awesome-smlee/newFirstProject.git
 			}
 		}
 	}
@@ -72,7 +86,9 @@ public class Controller {
 		case 1:
 			return View.LOGIN;
 		case 2:
-			return View.SIGNUP;
+			return View.STORE;
+//		case 2:
+//			return View.SIGNUP;
 		default:
 			return View.HOME;
 		}
