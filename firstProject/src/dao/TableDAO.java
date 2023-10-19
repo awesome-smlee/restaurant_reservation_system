@@ -22,8 +22,8 @@ public class TableDAO {
 	JDBCUtil jdbc = JDBCUtil.getInstance();
 	
 	// 매장 조회
-	public Map<String, Object> getStoreInfo(String strName) {
-		String sql = "SELECT * FROM STR_NAME_VIEW WHERE STR_NAME = '"+ strName+"' ";
+	public Map<String, Object> getStoreInfo(String userNo) {
+		String sql = "SELECT * FROM STORES WHERE USERS_NO='"+ userNo +"' ";
 		return jdbc.selectOne(sql);
 	}
 
@@ -40,7 +40,7 @@ public class TableDAO {
 	public int createTable(List<Object> param) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("INSERT INTO TABLES (TBL_NO, TBL_SEAT, STR_NUM, STR_NO) ");
-		sb.append(" VALUES(TBL_NO_SEQ.NEXTVAL, ?, ?, ?) ");
+		sb.append("VALUES(TBL_NO_SEQ.NEXTVAL, ?, ?, ?)");
 		String sql = sb.toString();
 		return jdbc.update(sql, param);
 	}

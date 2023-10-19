@@ -43,6 +43,7 @@ public class CustomerService {
 		if (strNum == 0) {
 			return View.USER_MYPAGE;
 		} else {
+			
 			PrintUtil.printTitle("예약하기");
 
 			int resPer = ScanUtil.nextInt("인원 수 >> ");

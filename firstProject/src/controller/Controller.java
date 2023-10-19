@@ -21,7 +21,7 @@ public class Controller {
 	
 	LoginService loginService = LoginService.getInstance(); // 로그인 
 	UserService userService = UserService.getInstance();    // 사용자
-	StoreService storeServie = StoreService.getInstance();  // 매장
+	StoreService storeService = StoreService.getInstance();  // 매장
 	CustomerService customerService = CustomerService.getInstance(); // 고객
 	ReservationService reservationService = ReservationService.getInstance();
 	MenuService menuService = MenuService.getInstance();    // [매장] 메뉴
@@ -35,8 +35,7 @@ public class Controller {
 	public static View view = View.HOME;
 	
 	private void start() {
-		sessionStorage.put("login", false);
-		sessionStorage.put("loginInfo", null);
+		sessionStorage.put("USERS", null);
 		
 		while (true) {
 			switch (view) {
@@ -46,21 +45,26 @@ public class Controller {
 			case LOGIN:
 				view = loginService.login();
 				break;
-//			case SIGNUP:
-//				view = userService.signUp();
-//				break;
+			case SIGNUP:
+				view = userService.signUp();
+				break;
+//--------------------------------------------------				
 			case STORE:
-				view = tableService.getTableInfo();
+				view = storeService.store();
+				break;
+			case STORE_MGMT:
+				view = storeService.storeMgmt();
+				break;
+			case STORE_MGMT_INSERT:
+				view = storeService.storeMgmtInsert();
 				break;
 //--------------------------------------------------
-//			case STORE:
-//				view = storeServie.createStore();
-//				break;
-//			case CUSTOMER:
-//				view = customerService.list();
-//				break;
-//			case RESERVATION:
-//				view = reservationService.reservationList();
+
+			case CUSTOMER:
+				view = customerService.list();
+				break;
+			case RESERVATION:
+				view = reservationService.reservationList();
 				
 				
 			}
@@ -78,10 +82,10 @@ public class Controller {
 		switch (ScanUtil.nextInt("번호 입력 >> ")) {
 		case 1:
 			return View.LOGIN;
-		case 2:
-			return View.STORE;
 //		case 2:
-//			return View.SIGNUP;
+//			return View.STORE;
+		case 2:
+			return View.SIGNUP;
 		default:
 			return View.HOME;
 		}

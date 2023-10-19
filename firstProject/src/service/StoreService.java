@@ -3,10 +3,15 @@ package service;
 import util.FormatUtil;
 import util.PrintUtil;
 import util.ScanUtil;
+import util.StoreUtil;
 import util.View;
 import java.util.regex.Pattern;
+
+import controller.Controller;
+
 import java.util.regex.Matcher;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,14 +22,14 @@ import dao.StoreDAO;
 
 public class StoreService {
 
-	private static final View View = null;
+	//private static final View View = null;
 	private static StoreService instance = null;
 	private StoreService() {}
 	public static StoreService getInstance() {
 		if (instance == null) instance = new StoreService();
 		return instance;
 	}
-
+	
 	// dao
 	StoreDAO storeDao = StoreDAO.getInstance();
 
@@ -36,16 +41,160 @@ public class StoreService {
 
 	String foodType = "";
 	
-	// 매장 조회
+	public View store() {
+		PrintUtil.printTitle("매장");
+		
+		View view = null;
+		
+		// 본인 매장 정보 조회
+		Map user = (Map)Controller.sessionStorage.get("USERS");
+		Map<String, Object> store = storeDao.getStoreByUsersNo(user.get("USERS_NO").toString());
+		
+		// 등록된 매장이 없을 경우, 매장 초기 등록
+		if(store == null) {
+			view = View.STORE_MGMT_INSERT;
+		} else {
+			System.out.println("0. 로그아웃");
+			System.out.println("1. 매장관리");
+			System.out.println("2. 메뉴관리");
+			System.out.println("3. 테이블관리");
+			System.out.println("4. 예약현황관리");
+			System.out.println("5. 마이페이지");
+			int num = ScanUtil.nextInt("입력 >> ");
+			
+			switch(num) {
+				case 0:
+					view = View.HOME;
+					break;
+				case 1:
+					view = View.STORE_MGMT;
+					break;
+				case 2:
+					view = View.MENU_MGMT;
+					break;
+				case 3:
+					view = View.TABLE_MGMT;
+					break;
+				case 4:
+					view = View.TABLE_MGMT;
+					break;
+				case 5:
+					view = View.TABLE_MGMT;
+					break;
+			}
+		}
+		
+		return view;
+	}
+	
+	// 매장 관리
+	public View storeMgmt() {
+		View view = null;
+		PrintUtil.printTitle(View.STORE.name());
+		System.out.println("0. 뒤로가기");
+		System.out.println("1. 매장조회");
+		System.out.println("2. 매장수정");
+		
+		int num = ScanUtil.nextInt("입력 >> ");
+		switch(num) {
+			case 0:
+				view = View.HOME;
+				break;
+			case 1:
+				view = View.STORE_MGMT_DETAIL;
+				break;
+			case 2:
+				view = View.STORE_MGMT_UPDATE;
+				break;
+		}
+		return view;
+	}
+	
+	// 매장 등록
+	public View storeMgmtInsert() {
+		PrintUtil.printTitle("매장 등록");
+		
+		// 매장분류
+		StoreUtil.printStoreList();
+		int num = ScanUtil.nextInt("매장분류 >> ");
+		String type = StoreUtil.getStoreType(num-1);
+		
+		// 매장명
+		String name = ScanUtil.nextLine("매장명 >> ");
+
+		// 매장 전화번호
+		String tellNo = "";
+		while (true) {
+			System.out.println("※ 예시)(지역번호)-000-0000 ※");
+			tellNo = ScanUtil.nextLine("매장 전화번호 >> ");
+			if (!tellNo.matches(tellNoPattern)) {
+				System.out.println("전화번호 형식이 올바르지 않습니다. 다시 입력하세요.");
+			} else
+				break;
+		}
+
+		// 매장주소
+		String address = ScanUtil.nextLine("매장 주소 >> ");
+
+		// 오픈시간
+		System.out.println("※ 예시) 11:00 -> 1100 ※");
+		String open = ScanUtil.nextLine("오픈 시간 >> ");
+
+		// 브레이크 타임 시작 시간
+		System.out.println("※ 예시) 15:00 -> 1500 ※");
+		String breakStart = ScanUtil.nextLine("브레이크 타임 시작 시간 >> ");
+
+		// 브레이크 타임 종료 시간
+		System.out.println("※ 예시) 17:00 -> 1700 ※");
+		String breakClose = ScanUtil.nextLine("브레이크 타임 종료 시간 >> ");
+
+		// 마감시간
+		System.out.println("※ 예시) 21:00 -> 2100 ※");
+		String close = ScanUtil.nextLine("마감 시간 >> ");
+
+		// 사업자명
+		String ceo = ScanUtil.nextLine("사업자명 >> ");
+
+		// 사업자번호
+		String businessNum = ScanUtil.nextLine("사업자번호 >> ");
+
+		List<Object> param = new ArrayList<Object>();
+		param.add(foodType);
+		param.add(name);
+		param.add(tellNo);
+		param.add(address);
+		param.add(open);
+		param.add(breakStart);
+		param.add(breakClose);
+		param.add(close);
+		param.add(ceo);
+		param.add(businessNum);
+
+		int result = storeDao.insertStore(param);
+
+		if (result > 0) {
+			System.out.println("매장 정보가 정상적으로 등록되었습니다.");
+		} else {
+			System.out.println("매장 등록이 정상적으로 이루어지지 않았습니다. 처음부터 다시 입력해주세요.");
+			return View.STORE_MGMT_INSERT;
+		}
+
+		return View.STORE_MGMT;
+	}
+	
+	
+	// 매장 조회 
 	public View getDetailStore() {
 		
 		PrintUtil.printTitle("등록한 매장 조회");
-		String name = ScanUtil.nextLine("매장 이름 >> ");
-		List<Map<String, Object>> result = storeDao.getStoreInfo(name);
+		
+		// 본인 매장 정보 조회
+		Map usersNo = (Map)Controller.sessionStorage.get("USERS");
+		Map<String, Object> result = storeDao.getStoreByUsersNo(usersNo.get("USERS_NO").toString());
 		
 		if(result != null) {
 			for(int i=0; i<result.size(); i++) {
-				Map<String, Object> map = result.get(i);
+				Map<String, Object> map = (Map)result.get(i);
 				System.out.println();
 				System.out.print("1.매장명 : ");
 				System.out.println(map.get("STR_NAME"));
@@ -70,108 +219,30 @@ public class StoreService {
 			System.out.println("매장 데이터가 존재하지 않습니다.");
 		}
 	
-		return View.STORE_INFO_DETAIL;
+		return View.STORE_MGMT_DETAIL;
 	}
 
-	// 매장 등록
-	public View createStore() {
-		PrintUtil.printTitle("매장 등록");
+	
 
-		System.out.println("1. 매장 타입");
-		
-		int type = ScanUtil.nextInt("[1] 한식 [2] 중식 [3] 일식 [4] 양식 [5] 분식 [6] 기타  >> ");
-		foodType = getStoreType(1);
-		
-		System.out.println();
-		System.out.println("2. 매장명");
-		String name = ScanUtil.nextLine("매장명 >> ");
-
-		System.out.println();
-		System.out.println("3. 매장 전화번호");
-		String tellNo = "";
-		while (true) {
-			System.out.println("※ 예시)(지역번호)-000-0000 ※");
-			tellNo = ScanUtil.nextLine("매장 전화번호 >> ");
-
-			if (!tellNo.matches(tellNoPattern)) {
-				System.out.println("전화번호 형식이 올바르지 않습니다. 다시 입력하세요.");
-			} else
-				break;
-		}
-
-		System.out.println();
-		System.out.println("4. 매장 주소");
-		String address = ScanUtil.nextLine("매장 주소 >> ");
-
-		System.out.println();
-		System.out.println("5. 오픈 시간");
-		System.out.println("※ 예시) 11:00 -> 1100 ※");
-		String open = ScanUtil.nextLine("오픈 시간 >> ");
-
-		System.out.println();
-		System.out.println("6. 브레이크 타임 시작 시간");
-		System.out.println("※ 예시) 15:00 -> 1500 ※");
-		String breakStart = ScanUtil.nextLine("브레이크 타임 시작 시간 >> ");
-
-		System.out.println();
-		System.out.println("7. 브레이크 타임 종료 시간");
-		System.out.println("※ 예시) 17:00 -> 1700 ※");
-		String breakClose = ScanUtil.nextLine("브레이크 타임 종료 시간 >> ");
-
-		System.out.println();
-		System.out.println("8. 마감 시간");
-		System.out.println("※ 예시) 21:00 -> 2100 ※");
-		String close = ScanUtil.nextLine("마감 시간 >> ");
-
-		System.out.println();
-		System.out.println("9. 사업자명");
-		String ceo = ScanUtil.nextLine("사업자명 >> ");
-
-		System.out.println();
-		System.out.println("10. 사업자번호");
-		String businessNum = ScanUtil.nextLine("사업자번호 >> ");
-
-		List<Object> param = new ArrayList<Object>();
-		param.add(foodType);
-		param.add(name);
-		param.add(tellNo);
-		param.add(address);
-		param.add(open);
-		param.add(breakStart);
-		param.add(breakClose);
-		param.add(close);
-		param.add(ceo);
-		param.add(businessNum);
-
-		int result = storeDao.createStore(param);
-
-		if (result > 0) {
-			System.out.println("매장 정보가 정상적으로 등록되었습니다.");
-		} else {
-			System.out.println("매장 등록이 정상적으로 이루어지지 않았습니다. 처음부터 다시 입력해주세요.");
-			return View.STORE_INFO_INSERT;
-		}
-
-		return View.STORE;
-	}
-
-	// 매장 수정
+	// 매장 수정  --> 수정중
 	public View updateStore() {
 
 		PrintUtil.printTitle("매장 정보 수정");
 
 		String setString = "";
 		String yesNo = "";
+		String strName = "";
 
-		String newName = ScanUtil.nextLine("매장 이름 >> ");
-		Map<String, Object> getName = storeDao.getStoreNameInfo(newName);
-		
+		// 본인 매장 정보 조회
+		Map usersNo = (Map)Controller.sessionStorage.get("USERS");
+		Map<String, Object> store = storeDao.getStoreByUsersNo(usersNo.get("USERS_NO").toString());
+
 		// 수정 가능한 매장인지 판별
-		if(getName != null && getName.containsValue(newName)) {
+		if(store != null && store.containsValue(store)) {
 			System.out.println("매장 수정이 가능합니다.");
-		} else if(getName == null) {
+		} else if(store == null) {
 			System.out.println("매장명을 다시 입력해주세요.");
-			return View.STORE_INFO_UPDATE;
+			return View.STORE_MGMT_UPDATE;
 		}
 		
 		// 매장명 수정
@@ -179,13 +250,13 @@ public class StoreService {
 			yesNo = ScanUtil.nextLine("매장명을 수정하시겠습니까? (y/n) >> ");
 			if (yesNo.equalsIgnoreCase("y")) {
 				while (true) {
-					String name = ScanUtil.nextLine("매장명 >> ");
-					Map<String, Object> result = storeDao.getStoreNameInfo(name);
+					strName = ScanUtil.nextLine("매장명 >> ");
+					Map<String, Object> result = storeDao.getStoreNameInfo(strName);
 
 					// 매장 중복 체크
 					if (result == null) {
 						System.out.println("수정 가능한 매장입니다.");
-						setString += " STR_NAME = '" + name + "', ";
+						setString += " STR_NAME = '" + strName + "', ";
 						break;
 					} else if (result != null) {
 						System.out.println("중복된 매장명입니다. 다른 매장명을 입력하세요.");
@@ -203,7 +274,7 @@ public class StoreService {
 		yesNo = ScanUtil.nextLine("매장 타입을 수정하시겠습니까? (y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
 			int type = ScanUtil.nextInt("[1] 한식 [2] 중식 [3] 일식 [4] 양식 [5] 분식 [6] 기타  >> ");
-			foodType = getStoreType(type);
+			foodType = StoreUtil.getStoreType(type);
 			setString += " STR_TYPE = '" + foodType + "', ";
 		}
 
@@ -279,45 +350,16 @@ public class StoreService {
 		setString = setString.substring(0, setString.length() - 2);
 	
 		List<Object> param = new ArrayList<Object>();
-		param.add(newName);
+		param.add(strName);
 
 		int row = storeDao.updateStore(setString, param);
 		if (row > 0) {
 			System.out.println("매장 정보가 정상적으로 수정되었습니다.");
 		} else {
 			System.out.println("매장 정보 수정에 실패했습니다. 다시 입력해주세요.");
-			return View.STORE_INFO_UPDATE;
+			return View.STORE_MGMT_UPDATE;
 		}
 
-		return View.STORE_INFO_DETAIL;
+		return View.STORE_MGMT_DETAIL;
 	}
-
-	// 사용자로부터 번호 입력받아 매장 타입 선택
-	public String getStoreType(int type) {
-		switch (type) {
-		case 1:
-			foodType = "한식";
-			break;
-		case 2:
-			foodType = "중식";
-			break;
-		case 3:
-			foodType = "일식";
-			break;
-		case 4:
-			foodType = "양식";
-			break;
-		case 5:
-			foodType = "분식";
-			break;
-		case 6:
-			foodType = "기타";
-			break;
-		default:
-			System.out.println("유형을 다시 선택해주세요.");
-			break;
-		}
-		return foodType;
-	}
-	
 }

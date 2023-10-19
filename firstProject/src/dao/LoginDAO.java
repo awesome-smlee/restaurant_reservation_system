@@ -16,12 +16,8 @@ public class LoginDAO {
 	
 	JDBCUtil jdbc = JDBCUtil.getInstance();
 	
-	public Map<String, Object> login(String id, String pw){
-		String sql = "SELECT * FROM USERS WHERE USERS_ID = ? AND USERS_PW = ?";
-		List<Object> param = new ArrayList<Object>();
-		param.add(id);
-		param.add(pw);
-		
-		return jdbc.selectOne(sql, param);
+	public Map<String, Object> login(String id, String pw) {
+		String sql = "SELECT * FROM USERS WHERE USERS_ID = '" + id + "' AND USERS_PW ='" + pw + "'";
+		return jdbc.selectOne(sql);
 	}
 }

@@ -84,7 +84,7 @@ public class MenuService {
 			System.out.println("메뉴가 정상적으로 등록되었습니다.");
 		} else {
 			System.out.println("메뉴 등록에 실패했습니다. 다시 입력해주세요.");
-			return View.STORE_MENU_INSERT;
+			return View.MENU_MGMT_INSERT;
 		}
 		
 		return View.STORE;
