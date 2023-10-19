@@ -43,12 +43,7 @@ public class ReservationService {
 		}
 		System.out.println("- 요청사항 : " + reservationDao.viewReservation().get("RES_REQ"));
 		System.out.println("--------------------------------");
-		List<Map<String, Object>> result3 = reservationDao.totalPriceList(resNo);
-		for (int j = 0; j < result3.size(); j++) {
-			Map<String, Object> totalprice = result3.get(j);
-			System.out.println("총 금액 : " + totalprice.get("TOTAL_PRICE_SUM"));
-			System.out.println();
-		}
+		System.out.println("- 총 금액 : " + reservationDao.totalPriceList(resNo).get("TOTAL_PRICE_SUM")+"원");
 		return View.CUSTOMER;
 	}
 

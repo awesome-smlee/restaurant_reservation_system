@@ -30,20 +30,23 @@ public class ReservationDAO {
 		String sql = "SELECT * FROM RESERVATION";
 		return jdbc.selectOne(sql);
 	}
-	public List<Map<String, Object>> tables(){
-		String sql = "SELECT TBL_NO, TBL_SEAT FROM TABLES";
+	public List<Map<String, Object>> tables(int strNum){
+		String sql = "SELECT  TBL_NO , STR_NUM, " + 
+				"ROW_NUMBER() OVER (ORDER BY TBL_NO) AS TBL_COUNT, TBL_SEAT " + 
+				"FROM TABLES " + 
+				"WHERE STR_NUM = '"+strNum+"'";
 		return jdbc.selectList(sql);
 	}
 	
-	public void viewTable() {
-		List<Map<String, Object>> result = tables();
+	public void viewTable(int strNum) {
+		List<Map<String, Object>> result = tables(strNum);
 		for (int i = 0; i < result.size(); i++) { 
 			Map<String, Object> res = result.get(i);
-			System.out.print(res.get("TBL_NO") + ".("+res.get("TBL_SEAT")+"인석)");
+			System.out.print(res.get("TBL_COUNT") + ".("+res.get("TBL_SEAT")+"인석)");
 			System.out.println();
 		}
 	}
-	public List<Map<String, Object>> totalPriceList(String resNo){ // 전체 총 금액
+	public Map<String, Object> totalPriceList(String resNo){ // 전체 총 금액
 		String sql =  "SELECT TOTAL_PRICE_SUM " + 
 					  "FROM(SELECT RES_NO, SUM(TOTAL_QTY) AS TOTAL_QTY_SUM, SUM(TOTAL_PRICE) AS TOTAL_PRICE_SUM " +
 					  "FROM (SELECT O.RES_NO, SUM(O.OM_QTY) AS TOTAL_QTY, SUM(O.OM_QTY * O.OM_PRICE) AS TOTAL_PRICE " +
@@ -52,7 +55,7 @@ public class ReservationDAO {
 				      "GROUP BY O.RES_NO, O.OM_NAME) " +
 				      "GROUP BY RES_NO) " +
 				      "WHERE RES_NO = '"+resNo+"'";
-		return jdbc.selectList(sql);
+		return jdbc.selectOne(sql);
 	}
 	
 	public List<Map<String, Object>> totalMenuStateList(){ //메뉴 별 금액

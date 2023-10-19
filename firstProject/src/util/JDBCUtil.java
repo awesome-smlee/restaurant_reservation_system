@@ -142,33 +142,7 @@ public class JDBCUtil {
 		}
 		return result;
 	}
-	public List<Map<String, Object>> selectList(String sql, String resNo){
-		List<Map<String, Object>> result = null;
-		try {
-			conn = DriverManager.getConnection(url, user, pw);
-			ps = conn.prepareStatement(sql);
-			rs = ps.executeQuery();
-			ResultSetMetaData rsmd = rs.getMetaData();
-			int columnCount = rsmd.getColumnCount();
-			while(rs.next()) {
-				if(result == null) result = new ArrayList<>();
-				Map<String, Object> row = new HashMap<>();
-				for(int i = 1; i <= columnCount; i++) {
-					String key = rsmd.getColumnLabel(i);
-					Object value = rs.getObject(i);
-					row.put(key, value);
-				}
-				result.add(row);
-			}
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}finally {
-			if(rs != null) try { rs.close(); } catch(Exception e) {}
-			if(ps != null) try { ps.close(); } catch(Exception e) {}
-			if(conn != null) try { conn.close(); } catch(Exception e) {}
-		}
-		return result;
-	}
+	
 	public int update(String sql, List<Object> param) {
 		int result = 0;
 		try {
@@ -416,6 +390,31 @@ public class JDBCUtil {
 		return result;
 }
 	public Map<String, Object> selectOne(String sql, int param){
+		Map<String, Object> row = null;
+		try {
+			conn = DriverManager.getConnection(url, user, pw);
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int columnCount = rsmd.getColumnCount();
+			while(rs.next()) {
+				row = new HashMap<>();
+				for(int i = 1; i <= columnCount; i++) {
+					String key = rsmd.getColumnLabel(i);
+					Object value = rs.getObject(i);
+					row.put(key,value);
+				}
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(rs != null) try {  rs.close();  } catch (Exception e) { }
+			if(ps != null) try {  ps.close();  } catch (Exception e) { }
+			if(conn != null) try { conn.close(); } catch (Exception e) { }
+		}
+		return row;
+	}
+	public Map<String, Object> selectOne(String sql, String resNo){
 		Map<String, Object> row = null;
 		try {
 			conn = DriverManager.getConnection(url, user, pw);

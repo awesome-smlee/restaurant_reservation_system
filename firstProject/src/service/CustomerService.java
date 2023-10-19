@@ -52,7 +52,7 @@ public class CustomerService {
 
 			String resTime = Integer.toString(ScanUtil.nextInt("예약 시간 >> "));
 
-			reservationDao.viewTable(); // 테이블 번호 보여주는 메서드
+			reservationDao.viewTable(strNum); // 테이블 번호 보여주는 메서드
 			int tblNo = ScanUtil.nextInt("테이블 번호 >> ");
 
 			orderMenuDao.orderMenu(strNum); // 주문 메서드
