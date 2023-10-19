@@ -142,7 +142,33 @@ public class JDBCUtil {
 		}
 		return result;
 	}
-	
+	public List<Map<String, Object>> selectList(String sql, String resNo){
+		List<Map<String, Object>> result = null;
+		try {
+			conn = DriverManager.getConnection(url, user, pw);
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int columnCount = rsmd.getColumnCount();
+			while(rs.next()) {
+				if(result == null) result = new ArrayList<>();
+				Map<String, Object> row = new HashMap<>();
+				for(int i = 1; i <= columnCount; i++) {
+					String key = rsmd.getColumnLabel(i);
+					Object value = rs.getObject(i);
+					row.put(key, value);
+				}
+				result.add(row);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(rs != null) try { rs.close(); } catch(Exception e) {}
+			if(ps != null) try { ps.close(); } catch(Exception e) {}
+			if(conn != null) try { conn.close(); } catch(Exception e) {}
+		}
+		return result;
+	}
 	public int update(String sql, List<Object> param) {
 		int result = 0;
 		try {
@@ -193,7 +219,7 @@ public class JDBCUtil {
 		}
 		return result;
 	}
-	public void updateOrdermenu(String sql, String resNo, int strNum) {
+	public void updateOrdermenuResno(String sql, String resNo, int strNum) {
 		
 		try {
 			conn = DriverManager.getConnection(url, user, pw);
@@ -212,15 +238,17 @@ public class JDBCUtil {
 			if(conn != null) try { conn.close(); } catch(Exception e) {}
 		}
 	}
-	public void updateOne(String sql,String resPer, String resTime, String tblNo, String resReq){
+	public void updateReservList(String sql,String resNo, int resPer, String resTime, int tblNo, String resReq, int strNum){
 
 		try {
 			conn = DriverManager.getConnection(url, user, pw);
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, resPer);
-			ps.setString(2, resTime);
-			ps.setString(3, tblNo);
-			ps.setString(4, resReq);
+			ps.setString(1, resNo);
+			ps.setInt(2, resPer);
+			ps.setString(3, resTime);
+			ps.setInt(4, tblNo);
+			ps.setString(5, resReq);
+			ps.setInt(6, strNum);
 			int rowsAffected = ps.executeUpdate();
 			if(rowsAffected > 0) {
 				System.out.println("예약이 완료되었습니다.");
@@ -235,8 +263,27 @@ public class JDBCUtil {
 			if(conn != null) try { conn.close(); } catch(Exception e) {}
 		}
 	}
-		
-	public List<Map<String, Object>> updateOne(String sql, int StrNum, int param, int strNum){
+	public void selectResNo(String sql,String resNo){
+
+		try {
+			conn = DriverManager.getConnection(url, user, pw);
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, resNo);
+			int rowsAffected = ps.executeUpdate();
+			if(rowsAffected > 0) {
+				System.out.println("예약이 완료되었습니다.");
+			}else {
+				System.out.println("예약에 실패했습니다.");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			if(rs != null) try { rs.close(); } catch(Exception e) {}
+			if(ps != null) try { ps.close(); } catch(Exception e) {}
+			if(conn != null) try { conn.close(); } catch(Exception e) {}
+		}
+	}
+	public List<Map<String, Object>> updateOrderlist(String sql, int StrNum, int param, int strNum){
 		List<Map<String, Object>> result = null;
 		try {
 			conn = DriverManager.getConnection(url, user, pw);

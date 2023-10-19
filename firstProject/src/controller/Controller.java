@@ -8,6 +8,7 @@ import dao.OrderMenuDAO;
 import dao.ReservationDAO;
 import service.CustomerService;
 import service.LoginService;
+import service.ReservationService;
 import service.StoreService;
 import service.UserService;
 import util.PrintUtil;
@@ -23,8 +24,7 @@ public class Controller {
 	UserService userService = UserService.getInstance();    // 사용자
 	StoreService storeServie = StoreService.getInstance();  // 매장
 	CustomerService customerService = CustomerService.getInstance(); // 고객
-	OrderMenuDAO ordermenuDao = OrderMenuDAO.getInstance();
-	ReservationDAO reservationDao = ReservationDAO.getInstance();
+	ReservationService reservationService = ReservationService.getInstance();
 
 	// 실행
 	public static void main(String[] args) {
@@ -55,7 +55,7 @@ public class Controller {
 				view = customerService.list();
 				break;
 			case RESERVATION:
-				view = reservationDao.reservationList();
+				view = reservationService.reservationList();
 			}
 		}
 	}

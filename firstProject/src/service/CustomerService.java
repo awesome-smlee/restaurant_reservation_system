@@ -48,19 +48,22 @@ public class CustomerService {
 		} else {
 			PrintUtil.printTitle("예약하기");
 
-			String resPer = Integer.toString(ScanUtil.nextInt("인원 수 >> "));
+			int resPer = ScanUtil.nextInt("인원 수 >> ");
 
 			String resTime = Integer.toString(ScanUtil.nextInt("예약 시간 >> "));
 
-			reservationDao.viewTable();
-			String tblNo = Integer.toString(ScanUtil.nextInt("테이블 번호 >> "));
-			
-			orderMenuDao.orderMenu(strNum);
-			
+			reservationDao.viewTable(); // 테이블 번호 보여주는 메서드
+			int tblNo = ScanUtil.nextInt("테이블 번호 >> ");
+
+			orderMenuDao.orderMenu(strNum); // 주문 메서드
+
 			String resReq = ScanUtil.nextLine("요청사항을 입력해주세요. >> ");
-				reservationDao.reservation(resPer, resTime, tblNo, resReq);
-				orderMenuDao.updateResno(strNum);
-			
+
+			// 예약 번호 생성
+			reservationDao.makeResNo();
+			String resNo = reservationDao.makeResNo();
+			reservationDao.generateResNo(resNo, resPer, resTime, tblNo, resReq, strNum);
+
 			return View.RESERVATION;
 		}
 	}

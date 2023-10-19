@@ -44,24 +44,29 @@ public class OrderMenuDAO {
 				     "SELECT MENU_NAME, MENU_PRICE, 1 , ?" +
 				     "FROM MENU " +
 				     "WHERE SUBSTR(MENU_NO, 5,6) = ? AND STR_NUM = ? ";
-		jdbc.updateOne(sql,StrNum, param, strNum);
+		jdbc.updateOrderlist(sql, StrNum, param, strNum);
 	}
 //	public void updateResno(String resNo, int strNum) {
 //		String sql = "UPDATE ORDERMENU SET RES_NO = ? WHERE STR_NUM = ?";
 //		jdbc.updateOrdermenu(sql, resNo, strNum);
 //	}
 	
-	public void updateResno(int strNum) {
-		String sql = "INSERT INTO ORDERMENU(RES_NO) " +
-					 "SELECT RES_NO " +
-					 "FROM RESERVATION " +
+	public void updateResno(String resNo, int strNum) {
+		String sql = "UPDATE ORDERMENU SET " +
+					 "RES_NO = ? " +
 					 "WHERE STR_NUM = ?";
-		jdbc.updateOne(sql, strNum);
+		jdbc.updateOrdermenuResno(sql, resNo, strNum);
 	}
 	
 	public List<Map<String, Object>> selectOrderList(){
 		String sql = "SELECT * FROM ORDERMENU";
 		return jdbc.selectlist(sql, 0);
+	}
+	public void orderMenu(int strNum) {
+		menuList(strNum);
+		int orderMenu = ScanUtil.nextInt("주문하실 메뉴를 선택하세요 >> ");
+		int StrNum = strNum;
+		selectMenu(orderMenu, strNum, StrNum);
 	}
 	public void menuList(int strNum) {
 		List<Map<String, Object>> result = menu(strNum);
@@ -94,12 +99,6 @@ public class OrderMenuDAO {
 		}
 	}
 	
-	public void orderMenu(int strNum) {
-		menuList(strNum);
-		int orderMenu = ScanUtil.nextInt("주문하실 메뉴를 선택하세요 >> ");
-		int StrNum = strNum;
-		selectMenu(orderMenu, strNum, StrNum);
-	}
 }
 	
 	
