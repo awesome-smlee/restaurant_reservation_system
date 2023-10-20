@@ -63,7 +63,7 @@ public class Controller {
 			case CUSTOMER:
 				view = customerService.list();
 				break;
-			case RESERVATION:
+			case CUSTOMER_RESERVATION:
 				view = reservationService.reservationList();
 				
 				

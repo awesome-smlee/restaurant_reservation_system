@@ -30,22 +30,35 @@ public class ReservationDAO {
 		String sql = "SELECT * FROM RESERVATION";
 		return jdbc.selectOne(sql);
 	}
-	public List<Map<String, Object>> tables(int strNum){
-		String sql = "SELECT  TBL_NO , STR_NUM, " + 
+	
+	public Map<String,Object> tableCheck(String resTime, int tblNo, String strNo) {
+		String sql = "SELECT * FROM RESERVATION WHERE RES_TIME = '"+resTime+"' AND TBL_NO = '"+tblNo+"' AND STR_NO = '"+strNo+"'";
+		return jdbc.selectOne(sql);
+	}
+	
+	public Map<String, Object> getRezTimeInfo(String resTime, String strNo){
+		String sql = "SELECT * FROM RESERVATION WHERE RES_TIME = '"+resTime+"' AND STR_NO = '"+strNo+"'";
+		return jdbc.selectOne(sql);
+	}
+	
+	public List<Map<String, Object>> tables(String strNo){
+		String sql = "SELECT  TBL_NO , STR_NO," + 
 				"ROW_NUMBER() OVER (ORDER BY TBL_NO) AS TBL_COUNT, TBL_SEAT " + 
 				"FROM TABLES " + 
-				"WHERE STR_NUM = '"+strNum+"'";
+				"WHERE STR_NO = '"+strNo+"'";
 		return jdbc.selectList(sql);
 	}
 	
-	public void viewTable(int strNum) {
-		List<Map<String, Object>> result = tables(strNum);
-		for (int i = 0; i < result.size(); i++) { 
-			Map<String, Object> res = result.get(i);
-			System.out.print(res.get("TBL_COUNT") + ".("+res.get("TBL_SEAT")+"인석)");
-			System.out.println();
-		}
+	public Map<String, Object> tableNoCheck(String strNo, int tblNo){
+		String sql = "SELECT TBL_COUNT " +
+				"FROM (SELECT  TBL_NO , STR_NO, " + 
+				"ROW_NUMBER() OVER (ORDER BY TBL_NO) AS TBL_COUNT, TBL_SEAT " + 
+				"FROM TABLES " + 
+				"WHERE STR_NO = '"+strNo+"') "+
+				"WHERE TBL_COUNT = '"+tblNo+"'";
+		return jdbc.selectOne(sql);
 	}
+	
 	public Map<String, Object> totalPriceList(String resNo){ // 전체 총 금액
 		String sql =  "SELECT TOTAL_PRICE_SUM " + 
 					  "FROM(SELECT RES_NO, SUM(TOTAL_QTY) AS TOTAL_QTY_SUM, SUM(TOTAL_PRICE) AS TOTAL_PRICE_SUM " +
@@ -69,12 +82,12 @@ public class ReservationDAO {
 	}
 	public List<Map<String, Object>> ResnoOrderList(String resNo){
 		String sql = "SELECT OM_NAME, TOTAL_QTY, TOTAL_PRICE " +
-					 "FROM(SELECT RES_NO, OM_NAME, SUM(TOTAL_QTY) AS TOTAL_QTY, SUM(TOTAL_PRICE) AS TOTAL_PRICE " +
-					 "FROM(SELECT RES_NO, OM_NAME, SUM(OM_QTY) AS TOTAL_QTY, SUM(OM_PRICE) AS TOTAL_PRICE " +
-					 "FROM ORDERMENU " +
-					 "GROUP BY RES_NO, OM_NAME)" +
-					 "GROUP BY RES_NO, OM_NAME)" +
-					 "WHERE RES_NO = '"+resNo+"'";
+				     "FROM(SELECT RES_NO, OM_NAME, SUM(TOTAL_QTY) AS TOTAL_QTY, SUM(TOTAL_PRICE) AS TOTAL_PRICE " +
+				     "FROM(SELECT RES_NO, OM_NAME, SUM(OM_QTY) AS TOTAL_QTY, SUM(OM_PRICE) AS TOTAL_PRICE " +
+				     "FROM ORDERMENU " +
+				     "GROUP BY RES_NO, OM_NAME) " +
+				     "GROUP BY RES_NO, OM_NAME) " +
+				     "WHERE RES_NO = '"+resNo+"'";
 		return jdbc.selectList(sql);
 	}
 	
@@ -90,17 +103,24 @@ public class ReservationDAO {
 		return randomString.toString();
 	}
 	
-	public void reservation(String resNo, int resPer, String resTime, int tblNo, String resReq, int strNum) {
-		String sql = "INSERT INTO RESERVATION(RES_NO, RES_PER, RES_TIME, TBL_NO, RES_REQ, STR_NUM) VALUES (?, ?, ?, ?, ?, ? )";
-		jdbc.updateReservList(sql, resNo, resPer, resTime, tblNo, resReq, strNum);
+	public void reservation(String resNo, String resPer, String resTime, int tblNo, String resReq, String strNo) {
+		String sql = "INSERT INTO RESERVATION(RES_NO, RES_PER, RES_TIME, TBL_NO, RES_REQ, STR_NO) VALUES (?, ?, ?, ?, ?, ? )";
+		jdbc.updateReservList(sql, resNo, resPer, resTime, tblNo, resReq, strNo);
 	}
 	
 	
-	public void generateResNo(String resNo, int resPer, String resTime,  int tblNo, String resReq, int strNum) {
-		reservation(resNo, resPer, resTime, tblNo, resReq, strNum);
-		orderMenuDao.updateResno(resNo, strNum);
+	
+	public void generateResNo(String resNo, String resPer, String resTime,  int tblNo, String resReq, String strNo) {
+		reservation(resNo, resPer, resTime, tblNo, resReq, strNo);
+		orderMenuDao.updateResno(resNo, strNo);
 		
 	}
-	
+//	public void viewTable(String strNo) {
+//		List<Map<String, Object>> result = tables(strNo);
+//		for (int i = 0; i < result.size(); i++) { 
+//			Map<String, Object> res = result.get(i);
+//			System.out.print(res.get("TBL_COUNT") + ".("+res.get("TBL_SEAT")+"인석)");
+//			System.out.println();
+//		}
 	
 }
