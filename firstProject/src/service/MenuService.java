@@ -21,8 +21,41 @@ public class MenuService {
 	
 	MenuDAO menuDao = MenuDAO.getInstance();
 
-	// 메뉴 조회
-	public View getMenuInfo() {
+	// 메뉴 관리
+	public View menuMgmt() {
+		View view = null;
+		PrintUtil.printTitle("메뉴");
+		System.out.println("0. 뒤로가기");
+		System.out.println("1. 메뉴 목록");
+		System.out.println("2. 메뉴 등록");
+		
+		int num = ScanUtil.nextInt("입력 >> ");
+		switch(num) {
+			case 0:
+				view = View.HOME;
+				break;
+			case 1:
+				view = View.MENU_MGMT_LIST;
+				break;
+			case 2:
+				view = View.MENU_MGMT_INSERT;
+				break;
+		}
+		return view;
+	}
+	
+	// 메뉴 목록
+	public View menuMgmtList() {
+		View view = null;
+		PrintUtil.printTitle("메뉴 목록");
+		
+		// 해당 매장의 메뉴 이름 리스트 만들기
+		
+		return view.MENU_MGMT_DETAIL;
+	}
+	
+	// 메뉴 상세 조회
+	public View menuMgmtDetail() {
 		
 		PrintUtil.printTitle("메뉴 조회");
 		String strName = ScanUtil.nextLine("조회할 매장 >> ");
@@ -47,8 +80,8 @@ public class MenuService {
 		return View.STORE;
 	}
 	
-	// 메뉴 등록
-	public View createMenu() {
+	// 메뉴 등록 
+	public View menuMgmtInsert() {
 		PrintUtil.printTitle("메뉴 등록");
 		String strName = "";
 		String menuName = "";
@@ -91,7 +124,7 @@ public class MenuService {
 	}
 	
 	// 메뉴 수정 
-	public View updateMenu() {
+	public View menuMgmtUpdate() {
 		PrintUtil.printTitle("메뉴 정보 수정");
 		String setString = "";
 		String yesNo = "";
@@ -162,7 +195,7 @@ public class MenuService {
 	}
 	
 	// 메뉴 삭제
-	public View deleteMenu() {
+	public View menuMgmtDelete() {
 		PrintUtil.printTitle("메뉴 삭제");
 		
 		String menuName = ScanUtil.nextLine("삭제할 메뉴명 >> ");

@@ -48,18 +48,18 @@ public class StoreService {
 		
 		// 본인 매장 정보 조회
 		Map user = (Map)Controller.sessionStorage.get("USERS");
-		Map<String, Object> store = storeDao.getStoreByUsersNo(user.get("USERS_NO").toString());
+		Map<String, Object> store = storeDao.getStoreByUsersNo(user.get("USERS_NO"));
 		
 		// 등록된 매장이 없을 경우, 매장 초기 등록
 		if(store == null) {
 			view = View.STORE_MGMT_INSERT;
 		} else {
-			System.out.println("0. 로그아웃");
-			System.out.println("1. 매장관리");
-			System.out.println("2. 메뉴관리");
-			System.out.println("3. 테이블관리");
-			System.out.println("4. 예약현황관리");
+			System.out.println("1. 매장 관리");
+			System.out.println("2. 메뉴 관리");
+			System.out.println("3. 테이블 관리");
+			System.out.println("4. 예약현황 관리");
 			System.out.println("5. 마이페이지");
+			System.out.println("0. 로그아웃");
 			int num = ScanUtil.nextInt("입력 >> ");
 			
 			switch(num) {
@@ -76,11 +76,11 @@ public class StoreService {
 					view = View.TABLE_MGMT;
 					break;
 				case 4:
-					view = View.TABLE_MGMT;
+					view = View.RESV_MGMT;
 					break;
-				case 5:
-					view = View.TABLE_MGMT;
-					break;
+//				case 5:
+//					view = View.마이페이지;
+//					break;
 			}
 		}
 		
@@ -90,10 +90,10 @@ public class StoreService {
 	// 매장 관리
 	public View storeMgmt() {
 		View view = null;
-		PrintUtil.printTitle(View.STORE.name());
+		PrintUtil.printTitle("매장");
+		System.out.println("1. 매장 조회");
+		System.out.println("2. 매장 수정");
 		System.out.println("0. 뒤로가기");
-		System.out.println("1. 매장조회");
-		System.out.println("2. 매장수정");
 		
 		int num = ScanUtil.nextInt("입력 >> ");
 		switch(num) {
@@ -184,18 +184,19 @@ public class StoreService {
 	
 	
 	// 매장 조회 
-	public View getDetailStore() {
-		
+	public View storeMgmtDetail() {
 		PrintUtil.printTitle("등록한 매장 조회");
 		
 		// 본인 매장 정보 조회
-		Map usersNo = (Map)Controller.sessionStorage.get("USERS");
-		Map<String, Object> result = storeDao.getStoreByUsersNo(usersNo.get("USERS_NO").toString());
-		
-		if(result != null) {
-			for(int i=0; i<result.size(); i++) {
-				Map<String, Object> map = (Map)result.get(i);
-				System.out.println();
+		Map user = (Map)Controller.sessionStorage.get("USERS"); 
+		Map<String, Object> strMap = storeDao.getStoreByUsersNo(user.get("USERS_NO"));
+
+		List<Map<String, Object>> strList = new ArrayList<Map<String,Object>>();
+		strList.add(strMap);
+				
+		if(strList != null && !strList.isEmpty()) {
+			for(int i=0; i<strList.size(); i++) {
+				Map<String, Object> map = strList.get(i);
 				System.out.print("1.매장명 : ");
 				System.out.println(map.get("STR_NAME"));
 				System.out.print("2.매장 타입 : ");
@@ -215,17 +216,14 @@ public class StoreService {
 				System.out.print("8.사업자 등록번호 : ");
 				System.out.println(map.get("STR_BN"));
 			}
-		} else if(result == null) {
+		} else {
 			System.out.println("매장 데이터가 존재하지 않습니다.");
 		}
-	
-		return View.STORE_MGMT_DETAIL;
+		return View.STORE_MGMT;
 	}
-
 	
-
-	// 매장 수정  --> 수정중
-	public View updateStore() {
+	// 매장 수정
+	public View storeMgmtUpdate() {
 
 		PrintUtil.printTitle("매장 정보 수정");
 
@@ -234,16 +232,16 @@ public class StoreService {
 		String strName = "";
 
 		// 본인 매장 정보 조회
-		Map usersNo = (Map)Controller.sessionStorage.get("USERS");
-		Map<String, Object> store = storeDao.getStoreByUsersNo(usersNo.get("USERS_NO").toString());
-
+		Map user = (Map)Controller.sessionStorage.get("USERS");
+		Map<String, Object> store = storeDao.getStoreByUsersNo(user.get("USERS_NO").toString());
+		
 		// 수정 가능한 매장인지 판별
-		if(store != null && store.containsValue(store)) {
-			System.out.println("매장 수정이 가능합니다.");
-		} else if(store == null) {
-			System.out.println("매장명을 다시 입력해주세요.");
-			return View.STORE_MGMT_UPDATE;
-		}
+//		if(store != null && store.containsValue(store)) {
+//			System.out.println("매장 수정이 가능합니다.");
+//		} else if(store == null) {
+//			System.out.println("매장명을 다시 입력해주세요.");
+//			return View.STORE_MGMT_UPDATE;
+//		}
 		
 		// 매장명 수정
 		while (true) {
@@ -251,14 +249,14 @@ public class StoreService {
 			if (yesNo.equalsIgnoreCase("y")) {
 				while (true) {
 					strName = ScanUtil.nextLine("매장명 >> ");
-					Map<String, Object> result = storeDao.getStoreNameInfo(strName);
+					Map<String, Object> getStrName = storeDao.getStoreByUsersNo(user.get("STR_NAME"));
 
 					// 매장 중복 체크
-					if (result == null) {
+					if (getStrName == null) {
 						System.out.println("수정 가능한 매장입니다.");
 						setString += " STR_NAME = '" + strName + "', ";
 						break;
-					} else if (result != null) {
+					} else if (getStrName != null) {
 						System.out.println("중복된 매장명입니다. 다른 매장명을 입력하세요.");
 					}
 					
@@ -360,6 +358,6 @@ public class StoreService {
 			return View.STORE_MGMT_UPDATE;
 		}
 
-		return View.STORE_MGMT_DETAIL;
+		return View.STORE;
 	}
 }

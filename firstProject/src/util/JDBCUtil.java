@@ -22,8 +22,8 @@ public class JDBCUtil {
 			instance = new JDBCUtil();
 		return instance;
 	}
-	private String url = "jdbc:oracle:thin:@localhost:1521:xe";
-	private String user = "pc07";
+	private String url = "jdbc:oracle:thin:@192.168.146.71:1521:xe";
+	private String user = "project1st";
 	private String pw = "java";
 	
 	private Connection conn = null;
@@ -193,13 +193,13 @@ public class JDBCUtil {
 		}
 		return result;
 	}
-	public void updateOrdermenuResno(String sql, String resNo, int strNum) {
+	public void updateOrdermenuResno(String sql, String resNo, String strNo) {
 		
 		try {
 			conn = DriverManager.getConnection(url, user, pw);
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, resNo);
-			ps.setInt(2, strNum);
+			ps.setString(2, strNo);
 			int rowsAffected = ps.executeUpdate();
 			if(rowsAffected > 0) {
 			}else {
@@ -212,17 +212,17 @@ public class JDBCUtil {
 			if(conn != null) try { conn.close(); } catch(Exception e) {}
 		}
 	}
-	public void updateReservList(String sql,String resNo, int resPer, String resTime, int tblNo, String resReq, int strNum){
+	public void updateReservList(String sql,String resNo, String resPer, String resTime, int tblNo, String resReq, String strNo){
 
 		try {
 			conn = DriverManager.getConnection(url, user, pw);
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, resNo);
-			ps.setInt(2, resPer);
+			ps.setString(2, resPer);
 			ps.setString(3, resTime);
 			ps.setInt(4, tblNo);
 			ps.setString(5, resReq);
-			ps.setInt(6, strNum);
+			ps.setString(6, strNo);
 			int rowsAffected = ps.executeUpdate();
 			if(rowsAffected > 0) {
 				System.out.println("예약이 완료되었습니다.");
@@ -257,14 +257,13 @@ public class JDBCUtil {
 			if(conn != null) try { conn.close(); } catch(Exception e) {}
 		}
 	}
-	public List<Map<String, Object>> updateOrderlist(String sql, int StrNum, int param, int strNum){
+	public void updateOrderlist(String sql,int menuNum,String strNo){
 		List<Map<String, Object>> result = null;
 		try {
 			conn = DriverManager.getConnection(url, user, pw);
 			ps = conn.prepareStatement(sql);
-			ps.setInt(1, StrNum);
-			ps.setInt(2, param);
-			ps.setInt(3, strNum);
+			ps.setInt(1, menuNum);
+			ps.setString(2, strNo);
 			int rowsAffected = ps.executeUpdate();
 				if(rowsAffected > 0) {
 					System.out.println("주문이 성공적으로 추가되었습니다.");
@@ -277,8 +276,8 @@ public class JDBCUtil {
 			if(ps != null) try { ps.close(); } catch(Exception e) {}
 			if(conn != null) try { conn.close(); } catch(Exception e) {}
 		}
-		return result;
 	}
+
 	public List<Map<String, Object>> updateOne(String sql, int strNum){
 		List<Map<String, Object>> result = null;
 		try {

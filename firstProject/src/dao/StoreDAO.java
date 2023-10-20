@@ -16,9 +16,8 @@ public class StoreDAO {
 	
 	JDBCUtil jdbc = JDBCUtil.getInstance();
 	
-	
 	// 매장 조회
-	public Map<String, Object> getStoreByUsersNo(String UsersNo) {
+	public Map<String, Object> getStoreByUsersNo(Object UsersNo) {
 		String sql = "SELECT * FROM STORES WHERE USERS_NO = '"+ UsersNo +"'";
 		return jdbc.selectOne(sql);
 	}
@@ -32,21 +31,6 @@ public class StoreDAO {
 		
 		return jdbc.update(sql, param);
 	}
-	
-	
-	// 매장 이름 조회
-	public Map<String, Object> getStoreNameInfo(String strName) {
-		String sql = "SELECT * FROM STORES WHERE STR_NAME = '"+ strName +"'";
-		return jdbc.selectOne(sql);
-	}
-//	
-//	// 매장 조회
-//	public List<Map<String, Object>> getStoreInfo(String name) {
-//		String sql = "SELECT STR_NAME,STR_TYPE,STR_TELNO,STR_ADDRESS,STR_OPEN,STR_CLOSE,STR_BRKSTRT,STR_BRKCLS,STR_CEO,STR_BN";
-//		sql += " FROM STORES WHERE STR_NAME = '" + name +"' ";
-//		return jdbc.selectList(sql);
-//	}
-//	
 	
 	// 매장 수정
 	public int updateStore(String setString, List<Object> param) {

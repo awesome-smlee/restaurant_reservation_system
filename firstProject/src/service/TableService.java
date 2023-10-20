@@ -27,11 +27,35 @@ public class TableService {
 	// dao
 	TableDAO tableDao = TableDAO.getInstance();
 
+	// 테이블 관리
+	public View tableMgmt() {
+		View view = null;
+		PrintUtil.printTitle("메뉴");
+		System.out.println("0. 뒤로가기");
+		System.out.println("1. 테이블 목록");
+		System.out.println("2. 테이블 등록");
+		
+		int num = ScanUtil.nextInt("입력 >> ");
+		switch(num) {
+			case 0:
+				view = View.HOME;
+				break;
+			case 1:
+				view = View.TABLE_MGMT_LIST;
+				break;
+			case 2:
+				view = View.TABLE_MGMT_INSERT;
+				break;
+		}
+		return view;
+	}
+	
+	
 	// 테이블 등록
-	public View createTable() {
+	public View tableMgmtInsert() {
 		PrintUtil.printTitle("테이블 등록");
 
-		Map user = (Map) Controller.sessionStorage.get("loginInfo");
+		Map user = (Map) Controller.sessionStorage.get("USERS");
 		Map<String, Object> store = tableDao.getStoreInfo(user.get("USERS_NO").toString());
 		
 		int i=0;
@@ -62,9 +86,9 @@ public class TableService {
 	}
 
 	
-	// 테이블 조회
-	public View getTableInfo() {
-		PrintUtil.printTitle("테이블 조회");
+	// 테이블 목록
+	public View tableMgmtList() {
+		PrintUtil.printTitle("테이블 목록");
 		
 		String strName = ScanUtil.nextLine("조회할 매장 >> ");
 		Map<String, Object> getStrNum = tableDao.getStoreInfo(strName);
