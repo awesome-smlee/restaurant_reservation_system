@@ -24,13 +24,11 @@ public class ReservationDAO {
 	// [점주 화면]
 	
 	// 해당 매장의 예약 목록 조회
-	public List<Map<String, Object>> resvMgmtList(Object strNo){
-		  String sql = "SELECT b.USERS_NAME, a.RES_TIME, a.RES_PER " +
-				  		"FROM RESERVATION a " +
-				  		"INNER JOIN USERS b " +
-				  		"ON a.USERS_NO = b.USERS_NO " +
+	public List<Map<String, Object>> resvMgmtList(String strNo){
+		  String sql = "SELECT RES_NO, RES_TIME, RES_PER " +
+				  		"FROM RESERVATION " +
 				  		"WHERE STR_NO = '"+strNo+"' " +
-				  		"ORDER BY RES_TIME";
+				  		"ORDER BY RES_TIME ";
 		return jdbc.selectList(sql);
 	}	
 	

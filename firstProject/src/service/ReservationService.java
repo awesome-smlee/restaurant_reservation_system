@@ -58,24 +58,24 @@ public class ReservationService {
 		PrintUtil.printTitle("예약 현황 상세");
 		
 		Map user = (Map)Controller.sessionStorage.get("USERS");
-		System.out.println(user);
 		Map<String, Object> getStr = storeDao.getStoreByUsersNo(user.get("USERS_NO"));
-		System.out.println(getStr);
-		List<Map<String, Object>> getResvList = reservationDao.resvMgmtList(getStr.get("STR_NO"));
+		List<Map<String, Object>> getResvList = reservationDao.resvMgmtList(getStr.get("STR_NO").toString());
 		
-		if(getResvList != null && !getResvList.isEmpty()) {
+		if(getResvList != null) {
+			System.out.println("[" + getResvList.size() + "]"+ "개의 예약이 있습니다.");
 			for(int i=0; i<getResvList.size(); i++) {
 				Map map = getResvList.get(i);
-				System.out.println(i + "개의 예약이 있습니다.");
-				System.out.println("예약자명" + map.get("USERS_NAME") + "\n");
-				System.out.print("예약시간" + map.get("USERS_NAME") + "\n");
-				System.out.print("예약인원" + map.get("USERS_NAME"));
+				System.out.println(map);
+				System.out.print(i + 1 + ". ");
+				System.out.print("예약번호 : " + map.get("RES_NO") + " | ");
+				System.out.print("예약시간 : " + map.get("RES_TIME") + " | ");
+				System.out.print("예약인원 : " + map.get("RES_PER"));
 			}
 		} else {
 			System.out.println("예약된 내역이 없습니다.");
 		}
 		
-		return view;
+		return view.RESV_MGMT;
 	}
 	
 	// 예약 현황 상세
