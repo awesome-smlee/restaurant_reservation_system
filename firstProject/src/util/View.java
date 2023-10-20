@@ -37,6 +37,8 @@ public enum View {
     // 고객
     CUSTOMER("고객"),
     CUSTOMER_RESERVATION("예약 현황");
+    
+	// 예약 현황
    
 	View(String title){}
 	

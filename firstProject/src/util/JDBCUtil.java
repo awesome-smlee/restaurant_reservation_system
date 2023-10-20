@@ -22,7 +22,7 @@ public class JDBCUtil {
 			instance = new JDBCUtil();
 		return instance;
 	}
-	private String url = "jdbc:oracle:thin:@192.168.146.71:1521:xe";
+	private String url = "jdbc:oracle:thin:@localhost:1521:xe";
 	private String user = "project1st";
 	private String pw = "java";
 	
