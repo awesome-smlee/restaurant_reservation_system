@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import controller.Controller;
 import dao.MenuDAO;
+import dao.StoreDAO;
 import util.PrintUtil;
 import util.ScanUtil;
 import util.View;
@@ -19,7 +21,9 @@ public class MenuService {
 		return instance;
 	}
 	
+	// dao
 	MenuDAO menuDao = MenuDAO.getInstance();
+	StoreDAO storeDao = StoreDAO.getInstance(); 
 
 	// 메뉴 관리
 	public View menuMgmt() {
@@ -46,61 +50,81 @@ public class MenuService {
 	
 	// 메뉴 목록
 	public View menuMgmtList() {
-		View view = null;
-		PrintUtil.printTitle("메뉴 목록");
-		
-		// 해당 매장의 메뉴 이름 리스트 만들기
-		
-		return view.MENU_MGMT_DETAIL;
+	    PrintUtil.printTitle("메뉴 목록");
+	    
+	    Map user = (Map)Controller.sessionStorage.get("USERS");
+	    Map<String, Object> store = storeDao.getStoreByUsersNo(user.get("USERS_NO"));
+	    
+	    if (store != null) {
+	        String strNo = store.get("STR_NO").toString();
+	        List<Map<String, Object>> menuList = menuDao.getMenu(strNo);
+
+	        if (menuList != null && !menuList.isEmpty()) {
+	            System.out.println("[" + store.get("STR_NAME") + "] 매장의 메뉴 목록");
+	            for (int i = 0; i < menuList.size(); i++) {
+	                Map<String, Object> menu = menuList.get(i);
+	                System.out.println("메뉴 " + (i + 1) + ": " + menu.get("MENU_NAME"));
+	            }
+	            System.out.println();
+	            
+	            int num = ScanUtil.nextInt("조회할 메뉴 선택 >> ");
+	            
+	            if (num >= 1 && num <= menuList.size()) {
+	                Controller.sessionStorage.put("SELECTED_MENU", menuList.get(num - 1));
+	                return View.MENU_MGMT_DETAIL;
+	            } else {
+	                System.out.println("올바른 메뉴 번호를 입력하세요.");
+	            }
+	        } else {
+	            System.out.println("메뉴가 존재하지 않습니다.");
+	        }
+	    } else {
+	        System.out.println("매장 정보를 가져오는 데 문제가 발생했습니다.");
+	    }
+	    
+	    return View.STORE;
 	}
-	
+
 	// 메뉴 상세 조회
 	public View menuMgmtDetail() {
-		
-		PrintUtil.printTitle("메뉴 조회");
-		String strName = ScanUtil.nextLine("조회할 매장 >> ");
-		List<Map<String, Object>> result = menuDao.getMenuInfo(strName);
-		if (result != null) {
-		    if (result.size() > 0) {
-		        for (int i = 0; i < result.size(); i++) {
-		            Map<String, Object> map = result.get(i);
-		            System.out.println("메뉴 " + (i + 1) + ":");
-		            System.out.println("1. 메뉴명: " + map.get("MENU_NAME"));
-		            System.out.println("2. 메뉴 설명: " + map.get("MENU_DESC"));
-		            System.out.println("3. 메뉴 가격: " + map.get("MENU_PRICE") + "원");
-		            System.out.println("=====================================");
-		        }
-		    } else {
-		        System.out.println("매장 데이터가 존재하지 않습니다.");
-		    }
-		} else {
-		    System.out.println("데이터를 가져오는 데 문제가 발생했습니다.");
-		}
-		
-		return View.STORE;
+	    PrintUtil.printTitle("메뉴 조회");
+	    
+	    Map selectedMenu = (Map) Controller.sessionStorage.get("SELECTED_MENU");
+	    List<Map<String, Object>> getMenu = menuDao.getMenuList(selectedMenu.get("MENU_NAME").toString());
+	    
+	    if (getMenu != null) {
+	    	for(int i=0; i<getMenu.size(); i++) {
+	    		Map<String, Object> menu = getMenu.get(i);
+	    		System.out.println("메뉴명: " + menu.get("MENU_NAME"));
+	    		System.out.println("메뉴 설명: " + menu.get("MENU_DESC"));
+	    		System.out.println("메뉴 가격: " + menu.get("MENU_PRICE") + "원");
+	    	}
+	    	
+	    } else {
+	        System.out.println("선택한 메뉴 정보를 가져오는 데 문제가 발생했습니다.");
+	    }
+	    
+	    return View.STORE;
 	}
+
 	
 	// 메뉴 등록 
 	public View menuMgmtInsert() {
 		PrintUtil.printTitle("메뉴 등록");
 		String strName = "";
-		String menuName = "";
+		String menu = "";
 		
-		// 매장명과 메뉴명 유효성 및 중복 체크
+		Map user = (Map)Controller.sessionStorage.get("USERS");
+		Map<String, Object> getStr = storeDao.getStoreByUsersNo(user.get("USERS_NO"));
+		
 		while(true) {
-			try {
-				strName = ScanUtil.nextLine("매장명 >> ");
-				Map<String, Object> getStrName = menuDao.getUserInfo(strName);
-				
-				if(getStrName != null) {
-					menuName = ScanUtil.nextLine("메뉴명 >> ");
-					break;
-				} else {
-					System.out.println("메뉴 등록에 실패했습니다. 다시 입력해주세요.");
-				}
-				
-			} catch (NullPointerException e) {
-				System.out.println("잘못된 매장명입니다. 다시 입력해주세요.");
+			menu = ScanUtil.nextLine("메뉴명 >> ");
+			int check = menuDao.duplCheckMenuName(menu, getStr.get("STR_NO").toString());
+			if(check > 0) {
+				System.out.println("중복된 메뉴입니다. 다른 메뉴명을 입력해주세요.");
+			} else {
+				System.out.println("등록 가능한 메뉴입니다.");
+				break;
 			}
 		}
 		
@@ -108,9 +132,10 @@ public class MenuService {
 		int price = ScanUtil.nextInt("가격 >> ");
 		
 		List<Object> param = new ArrayList<Object>();
-		param.add(menuName);
+		param.add(menu);
 		param.add(desc);
 		param.add(price);
+		param.add(getStr.get("STR_NO"));
 		
 		int result = menuDao.createStore(param);
 		if(result > 0) {
@@ -130,19 +155,18 @@ public class MenuService {
 		String yesNo = "";
 		String menuName = "";
 
-		String strName = ScanUtil.nextLine("매장명 >> ");
-		Map<String, Object> getName = menuDao.getUserInfo(strName);
-		Object menuFromMap = getName.get("MENU_NAME"); // 메뉴명
+		Map user = (Map)Controller.sessionStorage.get("USERS");
+		List<Map<String, Object>> getMenu = menuDao.getMenuListAll(user.get("USERS_NO").toString());
+		String getMenuName = (String) getMenu.get(1).get("MENU_NAME");
 
-		// 매장명과 메뉴명 유효성 및 중복 체크
-		if(getName != null) {
+		if(getMenu != null) {
 			try {
 				while(true) {
 					yesNo = ScanUtil.nextLine("메뉴명을 수정하시겠습니까? (y/n) >> ");
 					if(yesNo.equalsIgnoreCase("y")) {
 						while(true) {
 							menuName = ScanUtil.nextLine("기존 메뉴명 >> ");
-							if(menuName.equals(menuFromMap.toString())) {
+							if(menuName.equals(getMenuName)) {
 								System.out.println("수정이 가능한 메뉴입니다.");
 								String newMenuName = ScanUtil.nextLine("변경할 메뉴명 >> ");
 								setString += "MENU_NAME = '"+newMenuName+"', ";
@@ -179,8 +203,11 @@ public class MenuService {
 		
 		setString = setString.substring(0, setString.length() - 2);
 		
+		
+		Map<String, Object> getStr = storeDao.getStoreByUsersNo(user.get("USERS_NO"));
+		
 		List<Object> param = new ArrayList<Object>();
-		param.add(strName);
+		param.add(getStr);
 		param.add(menuName);
 		
 		int result = menuDao.updateMenu(setString, param);

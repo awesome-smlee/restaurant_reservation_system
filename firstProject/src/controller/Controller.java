@@ -91,6 +91,9 @@ public class Controller {
 			case TABLE_MGMT_LIST:
 				view = tableService.tableMgmtList();
 				break;
+			case TABLE_MGMT_INSERT:
+				view = tableService.tableMgmtInsert();
+				break;
 //			case TABLE_MGMT_UPDATE:
 //				view = tableService.tableMgmtUpdate();
 //				break;

@@ -1,5 +1,6 @@
 package dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,31 +15,57 @@ public class MenuDAO {
 	}
 	
 	JDBCUtil jdbc = JDBCUtil.getInstance();
-	
-	// 매장 조회
-	public Map<String, Object> getUserInfo(String strName) {
-		String sql = "SELECT * FROM STR_MENU_VIEW WHERE STR_NAME = '"+ strName+"' ";
-		return jdbc.selectOne(sql);
-	}
 
-	// 메뉴 조회
-	public List<Map<String, Object>> getMenuInfo(String strName) {
+	// 메뉴명 조회
+	public List<Map<String, Object>> getMenu(String strNo) {
+		String sql = "SELECT MENU_NAME FROM MENU WHERE STR_NO = '"+strNo+"' ";
+		return jdbc.selectList(sql);
+	}
+	
+	
+	// 메뉴 상세 조회
+	public List<Map<String, Object>> getMenuList(String menuName) {
 		String sql = "SELECT MENU_NAME, MENU_DESC, MENU_PRICE " +
                 "FROM MENU " +
-                "WHERE STR_NO = (SELECT STR_NO FROM STORES WHERE STR_NAME = '"+strName+"' ) ";
+                "WHERE MENU_NAME = '"+menuName+"' ";
+		return jdbc.selectList(sql);
+	}
+	
+	// 메뉴 전체 조회
+	public List<Map<String, Object>> getMenuListAll(String strNo) {
+		String sql = "SELECT * FROM MENU WHERE = '"+strNo+"' ";
 		return jdbc.selectList(sql);
 	}
 	
 	// 메뉴 등록
 	public int createStore(List<Object> param) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("INSERT INTO MENU (MENU_NO, MENU_NAME, MENU_DESC, MENU_PRICE, STR_NO, STR_NUM) ");
-		sb.append(" VALUES('SZ0005', ?, ?, ?, 'SB0001', 5)");
+		sb.append("INSERT INTO MENU (MENU_NO, MENU_NAME, MENU_DESC, MENU_PRICE, STR_NO) ");
+		sb.append(" VALUES(MENU_NO_SEQ.NEXTVAL, ?, ?, ?, ?) ");
 		String sql = sb.toString();
 		
 		return jdbc.update(sql, param);
 	}
 	
+	// 메뉴명 중복체크
+	public int duplCheckMenuName(String menu, String strNo) {
+	    String sql = "SELECT COUNT(*) FROM MENU WHERE MENU_NAME = ? AND STR_NO = ?";
+	    List<Object> params = new ArrayList<>();
+	    params.add(menu);
+	    params.add(strNo);
+
+	    List<Map<String, Object>> result = JDBCUtil.getInstance().selectList(sql, params);
+
+	    if (result != null && result.size() > 0) {
+	        Map<String, Object> row = result.get(0);
+	        Object countObj = row.get("COUNT(*)");
+	        if (countObj instanceof Number) {
+	            return ((Number) countObj).intValue();
+	        }
+	    }
+	    return 0; 
+	}
+
 	// 메뉴 수정
 	public int updateMenu(String setString, List<Object> param) {
 		String sql = " UPDATE MENU SET ";
@@ -53,5 +80,6 @@ public class MenuDAO {
 		String sql = "DELETE FROM MENU WHERE MENU_NAME = '"+menuName+"'" ;
 		return jdbc.update(sql);
 	}
+	
 }
 

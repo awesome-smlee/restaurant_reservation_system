@@ -219,6 +219,6 @@ public class UserService {
 			return View.RESIGNUP;
 		}
 
-		return View.HOME;
+		return View.STORE;
 	}
 }

@@ -25,23 +25,25 @@ public class ReservationDAO {
 	
 	// 해당 매장의 예약 목록 조회
 	public List<Map<String, Object>> resvMgmtList(String strNo){
-		  String sql = "SELECT RES_NO, RES_TIME, RES_PER " +
-				  		"FROM RESERVATION " +
-				  		"WHERE STR_NO = '"+strNo+"' " +
-				  		"ORDER BY RES_TIME ";
+		  String sql = "SELECT A.RES_NO, B.USERS_NAME, A.RES_TIME, A.RES_PER "
+				  	+ "FROM RESERVATION A "
+				  	+ "LEFT JOIN USERS B "
+				  	+ "ON B.USERS_NO = A.USERS_NO "
+				  	+ "WHERE STR_NO = '"+strNo+"' "
+				  	+ "ORDER BY RES_TIME";
 		return jdbc.selectList(sql);
 	}	
 	
 	// 예약 현황 상세
-	public List<Map<String, Object>> resvMgmtDetail(Object usersNo){
-		  String sql = "SELECT a.RES_NO, b.USERS_NAME, a.RES_TIME, a.RES_PER, " +
-				  		"LISTAGG(c.OM_NAME, ', ') WITHIN GROUP (ORDER BY c.OM_NAME), " +
-				  		"SUM(c.OM_PRICE), a.RES_REQ " +
-				  		"FROM RESERVATION a " +
-				  		"INNER JOIN USERS b ON a.USERS_NO = b.USERS_NO " +
-				  		"INNER JOIN ORDERMENU c ON a.RES_NO = c.RES_NO " +
-				  		"WHERE b.USERS_NO = '"+usersNo+"' " +
-				  		"GROUP BY a.RES_NO, b.USERS_NAME, a.RES_TIME, a.RES_PER, a.RES_REQ";
+	public List<Map<String, Object>> resvMgmtDetail(String resNo){
+		  String sql = "SELECT A.RES_NO, C.USERS_NAME, A.RES_TIME, A.RES_PER, "
+				  	+ "LISTAGG(B.OM_NAME, ', ') WITHIN GROUP (ORDER BY B.OM_NAME) AS OM_NAMES, "
+				  	+ "SUM(B.OM_PRICE) AS TOTAL_OM_PRICE, A.RES_REQ "
+				  	+ "FROM RESERVATION A "
+				  	+ "INNER JOIN ORDERMENU B ON A.RES_NO = B.RES_NO "
+				  	+ "INNER JOIN USERS C ON A.USERS_NO = C.USERS_NO "
+				  	+ "WHERE A.RES_NO = '"+resNo+"' "
+				  	+ "GROUP BY A.RES_NO, C.USERS_NAME, A.RES_TIME, A.RES_PER, A.RES_REQ ";
 		return jdbc.selectList(sql);
 	}	
 	

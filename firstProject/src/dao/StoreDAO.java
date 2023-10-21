@@ -33,11 +33,11 @@ public class StoreDAO {
 	}
 	
 	// 매장 수정
-	public int updateStore(String setString, List<Object> param) {
+	public int updateStore(String setString, String strNo) {
 		String sql = " UPDATE STORES SET ";
 		sql += setString;
-		sql += " WHERE STR_NAME = ? ";
+		sql += " WHERE STR_NO = '"+ strNo +"' ";
 		
-		return jdbc.update(sql, param);
+		return jdbc.update(sql);
 	}
 }

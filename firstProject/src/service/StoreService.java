@@ -98,7 +98,7 @@ public class StoreService {
 		int num = ScanUtil.nextInt("입력 >> ");
 		switch(num) {
 			case 0:
-				view = View.HOME;
+				view = View.STORE;
 				break;
 			case 1:
 				view = View.STORE_MGMT_DETAIL;
@@ -235,37 +235,12 @@ public class StoreService {
 		Map user = (Map)Controller.sessionStorage.get("USERS");
 		Map<String, Object> store = storeDao.getStoreByUsersNo(user.get("USERS_NO").toString());
 		
-		// 수정 가능한 매장인지 판별
-//		if(store != null && store.containsValue(store)) {
-//			System.out.println("매장 수정이 가능합니다.");
-//		} else if(store == null) {
-//			System.out.println("매장명을 다시 입력해주세요.");
-//			return View.STORE_MGMT_UPDATE;
-//		}
 		
 		// 매장명 수정
-		while (true) {
-			yesNo = ScanUtil.nextLine("매장명을 수정하시겠습니까? (y/n) >> ");
-			if (yesNo.equalsIgnoreCase("y")) {
-				while (true) {
-					strName = ScanUtil.nextLine("매장명 >> ");
-					Map<String, Object> getStrName = storeDao.getStoreByUsersNo(user.get("STR_NAME"));
-
-					// 매장 중복 체크
-					if (getStrName == null) {
-						System.out.println("수정 가능한 매장입니다.");
-						setString += " STR_NAME = '" + strName + "', ";
-						break;
-					} else if (getStrName != null) {
-						System.out.println("중복된 매장명입니다. 다른 매장명을 입력하세요.");
-					}
-					
-				} break;
-			} else if (yesNo.equalsIgnoreCase("n")) {
-				break;
-			} else {
-				System.out.println("잘못 입력하셨습니다. 다시 입력해주세요.");
-			}
+		yesNo = ScanUtil.nextLine("매장명을 수정하시겠습니까? (y/n) >> ");
+		if (yesNo.equalsIgnoreCase("y")) {
+			strName = ScanUtil.nextLine("매장명 >> ");
+			setString += " STR_NAME = '" + strName + "', ";
 		}
 
 		// 매장 타입 수정
@@ -277,19 +252,19 @@ public class StoreService {
 		}
 
 		// 매장 전화번호
-		String tellNo;
 		yesNo = ScanUtil.nextLine("매장 전화번호를 수정하시겠습니까? (y/n) >> ");
-		if (yesNo.equalsIgnoreCase("y")) {
+		if(yesNo.equalsIgnoreCase("y")) {
 			while (true) {
 				System.out.println("※ 예시)(지역번호)-000-0000 ※");
-				tellNo = ScanUtil.nextLine("매장 전화번호 >> ");
+				String tellNo = ScanUtil.nextLine("매장 전화번호 >> ");
 
 				if (!matcher.matches()) {
 					System.out.println("전화번호 형식이 올바르지 않습니다. 다시 입력하세요.");
-				} else
+				} else {
+					setString += " STR_TELNO = '" + tellNo + "', ";
 					break;
+				}
 			}
-			setString += " STR_TELNO = '" + tellNo + "', ";
 		}
 
 		// 매장 주소
@@ -337,20 +312,18 @@ public class StoreService {
 			String ceo = ScanUtil.nextLine("사업자명 >> ");
 			setString += " STR_CEO = '" + ceo + "', ";
 		}
-
+		
 		// 사업자 번호 수정
 		yesNo = ScanUtil.nextLine("사업자 번호를 수정하시겠습니까? (y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
 			String businessNum = ScanUtil.nextLine("사업자번호 >> ");
 			setString += " STR_BN = '" + businessNum + "', ";
 		}
-
+		
+		// 마지막 콤마(,) 제거
 		setString = setString.substring(0, setString.length() - 2);
 	
-		List<Object> param = new ArrayList<Object>();
-		param.add(strName);
-
-		int row = storeDao.updateStore(setString, param);
+		int row = storeDao.updateStore(setString, store.get("STR_NO").toString());
 		if (row > 0) {
 			System.out.println("매장 정보가 정상적으로 수정되었습니다.");
 		} else {

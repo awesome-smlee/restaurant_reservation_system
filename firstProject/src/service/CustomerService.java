@@ -58,7 +58,7 @@ public class CustomerService {
 			resPer = ScanUtil.nextLine("인원 수 >> ");
 		}
 		// 시간 예약
-		System.out.println("※ 입력 예시)12시 예약 → 1200");
+		System.out.println("※ 입력 예시)12시 예약 → 1200 ※");
 		String resTime = ScanUtil.nextLine("예약 시간 >> ");
 		
 		//테이블 번호 

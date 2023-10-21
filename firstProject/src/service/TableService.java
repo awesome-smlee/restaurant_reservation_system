@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import controller.Controller;
+import dao.StoreDAO;
 import dao.TableDAO;
 import util.PrintUtil;
 import util.ScanUtil;
@@ -26,6 +27,7 @@ public class TableService {
 
 	// dao
 	TableDAO tableDao = TableDAO.getInstance();
+	StoreDAO storeDao = StoreDAO.getInstance();
 
 	// 테이블 관리
 	public View tableMgmt() {
@@ -65,7 +67,6 @@ public class TableService {
 			
 			List<Object> param = new ArrayList<Object>();
 			param.add(strSeat);
-			param.add(store.get("STR_NUM"));
 			param.add(store.get("STR_NO"));
 			
 			int cnt = tableDao.createTable(param);
@@ -81,8 +82,7 @@ public class TableService {
 				break;
 			}
 		}
-		
-		return View.HOME;
+		return View.STORE;
 	}
 
 	
@@ -90,18 +90,15 @@ public class TableService {
 	public View tableMgmtList() {
 		PrintUtil.printTitle("테이블 목록");
 		
-		String strName = ScanUtil.nextLine("조회할 매장 >> ");
-		Map<String, Object> getStrNum = tableDao.getStoreInfo(strName);
-		
-		Object strNum = getStrNum.get("STR_NUM"); // STR_NUM
-		
-		List<Map<String, Object>> result = tableDao.getTableInfo(strNum);
+		Map user = (Map) Controller.sessionStorage.get("USERS");
+		Map<String, Object> strNo = storeDao.getStoreByUsersNo(user.get("USERS_NO"));
+		List<Map<String, Object>> result = tableDao.getTableList(strNo.get("STR_NO").toString());
 		
 		if (result != null) {
 		    if (result.size() > 0) {
 		        for (int i = 0; i < result.size(); i++) {
 		            Map<String, Object> map = result.get(i);
-		            System.out.print("테이블 " + map.get("TBL_COUNT") + " - ");
+		            System.out.print("테이블 " + map.get("TBL_COUNT") + "-");
 		            System.out.println("인원수:" + map.get("TBL_SEAT"));
 		        }
 		    } else {
@@ -111,6 +108,6 @@ public class TableService {
 		    System.out.println("데이터를 가져오는 데 문제가 발생했습니다.");
 		}
 		
-		return View;
+		return View.TABLE_MGMT;
 	}
 }
