@@ -14,18 +14,17 @@ import service.UserService;
 import util.ScanUtil;
 import util.View;
 
-
 public class Controller {
 	// sessionStorage
 	static public Map<String, Object> sessionStorage = new HashMap<>();
 	
 	LoginService loginService = LoginService.getInstance();  // 로그인 
 	UserService userService = UserService.getInstance();     // 사용자
-	StoreService storeService = StoreService.getInstance();  // 매장
-	CustomerService customerService = CustomerService.getInstance(); // 고객
-	ReservationService reservationService = ReservationService.getInstance();
-	MenuService menuService = MenuService.getInstance();     // [매장] 메뉴
-	TableService tableService = TableService.getInstance();  // [매장] 테이블식탁
+	ReservationService reservationService = ReservationService.getInstance(); // [공통] 예약
+	CustomerService customerService = CustomerService.getInstance(); // [고객]
+	StoreService storeService = StoreService.getInstance();  // [점주] 매장
+	MenuService menuService = MenuService.getInstance();     // [점주] 메뉴
+	TableService tableService = TableService.getInstance();  // [점주] 테이블
 
 	// 실행
 	public static void main(String[] args) {
@@ -48,7 +47,16 @@ public class Controller {
 			case SIGNUP:
 				view = userService.signUp();
 				break;
-//--------------------------------------------------
+			case RESIGNUP:
+				view = userService.resignUp();
+				break;
+			case USER_MYPAGE:
+				view = userService.userMypage();
+				break;
+			case USER_DETAIL:
+				view = userService.userDetail();
+				break;	
+			//--------------------------------------------------
 			// 매장 관리 
 			case STORE:
 				view = storeService.store();
@@ -91,15 +99,18 @@ public class Controller {
 			case TABLE_MGMT_LIST:
 				view = tableService.tableMgmtList();
 				break;
+			case TABLE_MGMT_DETAIL:
+				view = tableService.tableMgmtDetail();
+				break;
+			case TABLE_MGMT_UPDATE:
+				view = tableService.tableMgmtUpdate();
+				break;
+			case TABLE_MGMT_DELETE:
+				view = tableService.tableMgmtDelete();
+				break;
 			case TABLE_MGMT_INSERT:
 				view = tableService.tableMgmtInsert();
 				break;
-//			case TABLE_MGMT_UPDATE:
-//				view = tableService.tableMgmtUpdate();
-//				break;
-//			case TABLE_MGMT_DELETE:
-//				view = tableService.tableMgmtDelete();
-//				break;
 			// 예약 관리
 			case RESV_MGMT:
 				view = reservationService.resvMgmt();
@@ -110,8 +121,8 @@ public class Controller {
 			case RESV_MGMT_DETAIL:
 				view = reservationService.resvMgmtDetail();
 				break;
-//--------------------------------------------------
-
+			//--------------------------------------------------
+			// 고객 화면
 			case CUSTOMER:
 				view = customerService.list();
 				break;
@@ -124,17 +135,25 @@ public class Controller {
 
 	private View home() {
 
-		System.out.println("식당 예약 시스템에 오신 걸 환영합니다.");
+		System.out.println();
+		String welcomeMessage =
+		        "W   W  EEEEE  L      CCCC  OOO  M   M  EEEEE\n" +
+		        "W   W  E      L     C      O   O MM MM  E\n" +
+		        "W W W  EEE    L     C      O   O M M M  EEE\n" +
+		        "W W W  E      L     C      O   O M   M  E\n" +
+		        " W W   EEEEE  LLLLL  CCCC  OOO  M   M  EEEEE\n";
+
+        System.out.println(welcomeMessage);
+    	System.out.println("=========[[식당 주문 예약 시스템]]=========");
+		System.out.println("식당 주문 예약 시스템에 오신 걸 환영합니다.");
 		System.out.println();
 		System.out.println("이용하실 메뉴를 선택해주세요.");
 		System.out.println();
-		System.out.println("1. 로그인  / 2. 회원가입 ");
+		System.out.println("1. 로그인\t2. 회원가입 ");
 
-		switch (ScanUtil.nextInt("번호 입력 >> ")) {
+		switch (ScanUtil.nextInt("▶ 번호 입력 >> ")) {
 		case 1:
 			return View.LOGIN;
-//		case 2:
-//			return View.STORE;
 		case 2:
 			return View.SIGNUP;
 		default:

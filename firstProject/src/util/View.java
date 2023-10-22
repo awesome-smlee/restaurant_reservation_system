@@ -7,6 +7,7 @@ public enum View {
     RESIGNUP("회원 수정"),
     USER("사용자"),
     USER_MYPAGE("마이페이지"),
+    USER_DETAIL("회원정보조회"),
     
     // 매장
     STORE("매장"),
@@ -26,13 +27,13 @@ public enum View {
     TABLE_MGMT("테이블 관리"),
     TABLE_MGMT_LIST("테이블 목록"),
     TABLE_MGMT_INSERT("테이블 등록"),
+    TABLE_MGMT_DETAIL("테이블 상세"),
     TABLE_MGMT_UPDATE("테이블 수정"),
     TABLE_MGMT_DELETE("테이블 삭제"),
     
     RESV_MGMT("예약 현황"),
     RESV_MGMT_LIST("예약 목록"),
     RESV_MGMT_DETAIL("예약 상세"),
-    
     
     // 고객
     CUSTOMER("고객"),

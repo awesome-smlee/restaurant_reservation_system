@@ -23,8 +23,8 @@ public class LoginService {
 	
 	public View login() {
 		View view = null;
-		String id = ScanUtil.nextLine("아이디 입력>>> ");
-		String pw = ScanUtil.nextLine("비밀번호 입력>>> ");
+		String id = ScanUtil.nextLine("▶ 아이디 입력 >> ");
+		String pw = ScanUtil.nextLine("▶ 비밀번호 입력 >> ");
 		
 		Map<String, Object> user = loginDao.login(id,pw);
 		

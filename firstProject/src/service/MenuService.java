@@ -33,7 +33,7 @@ public class MenuService {
 		System.out.println("1. 메뉴 목록");
 		System.out.println("2. 메뉴 등록");
 		
-		int num = ScanUtil.nextInt("입력 >> ");
+		int num = ScanUtil.nextInt("▶ 입력 >> ");
 		switch(num) {
 			case 0:
 				view = View.HOME;
@@ -67,7 +67,7 @@ public class MenuService {
 	            }
 	            System.out.println();
 	            
-	            int num = ScanUtil.nextInt("조회할 메뉴 선택 >> ");
+	            int num = ScanUtil.nextInt("▶ 조회할 메뉴를 선택해주세요 >> ");
 	            
 	            if (num >= 1 && num <= menuList.size()) {
 	                Controller.sessionStorage.put("SELECTED_MENU", menuList.get(num - 1));
@@ -87,6 +87,7 @@ public class MenuService {
 
 	// 메뉴 상세 조회
 	public View menuMgmtDetail() {
+		View view = null;
 	    PrintUtil.printTitle("메뉴 조회");
 	    
 	    Map selectedMenu = (Map) Controller.sessionStorage.get("SELECTED_MENU");
@@ -104,10 +105,27 @@ public class MenuService {
 	        System.out.println("선택한 메뉴 정보를 가져오는 데 문제가 발생했습니다.");
 	    }
 	    
+	    // 메뉴 분기처리
+		System.out.println();
+		System.out.println("0. 뒤로가기");
+		System.out.println("1. 메뉴 수정");
+		System.out.println("2. 메뉴 삭제");
+		int num = ScanUtil.nextInt("▶ 입력 >> ");
+		switch(num) {
+			case 0:
+				view = View.MENU_MGMT;
+				break;
+			case 1:
+				view = View.MENU_MGMT_UPDATE;
+				break;
+			case 2:
+				view = View.MENU_MGMT_DELETE;
+				break;
+		}
+	    
 	    return View.STORE;
 	}
 
-	
 	// 메뉴 등록 
 	public View menuMgmtInsert() {
 		PrintUtil.printTitle("메뉴 등록");
@@ -118,7 +136,7 @@ public class MenuService {
 		Map<String, Object> getStr = storeDao.getStoreByUsersNo(user.get("USERS_NO"));
 		
 		while(true) {
-			menu = ScanUtil.nextLine("메뉴명 >> ");
+			menu = ScanUtil.nextLine("▶ 메뉴명 입력 >> ");
 			int check = menuDao.duplCheckMenuName(menu, getStr.get("STR_NO").toString());
 			if(check > 0) {
 				System.out.println("중복된 메뉴입니다. 다른 메뉴명을 입력해주세요.");
@@ -128,8 +146,8 @@ public class MenuService {
 			}
 		}
 		
-		String desc = ScanUtil.nextLine("메뉴 소개 >> ");
-		int price = ScanUtil.nextInt("가격 >> ");
+		String desc = ScanUtil.nextLine("▶ 메뉴 설명 입력 >> ");
+		int price = ScanUtil.nextInt("▶ 가격 입력 >> ");
 		
 		List<Object> param = new ArrayList<Object>();
 		param.add(menu);
@@ -162,13 +180,13 @@ public class MenuService {
 		if(getMenu != null) {
 			try {
 				while(true) {
-					yesNo = ScanUtil.nextLine("메뉴명을 수정하시겠습니까? (y/n) >> ");
+					yesNo = ScanUtil.nextLine("메뉴명을 수정하시겠습니까?(y/n) >> ");
 					if(yesNo.equalsIgnoreCase("y")) {
 						while(true) {
-							menuName = ScanUtil.nextLine("기존 메뉴명 >> ");
+							menuName = ScanUtil.nextLine("▶ 기존 메뉴명 입력 >> ");
 							if(menuName.equals(getMenuName)) {
 								System.out.println("수정이 가능한 메뉴입니다.");
-								String newMenuName = ScanUtil.nextLine("변경할 메뉴명 >> ");
+								String newMenuName = ScanUtil.nextLine("▶ 변경할 메뉴명 >> ");
 								setString += "MENU_NAME = '"+newMenuName+"', ";
 								break;
 							} else {
@@ -188,21 +206,20 @@ public class MenuService {
 		}
 		
 		// 메뉴 소개 수정
-		yesNo = ScanUtil.nextLine("메뉴 소개를 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("메뉴 소개를 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
 			String desc = ScanUtil.nextLine("메뉴 소개 >> ");
 			setString += " MENU_DESC = '"+desc+"', ";
 		}
 		
 		// 가격 수정
-		yesNo = ScanUtil.nextLine("메뉴 가격을 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("메뉴 가격을 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
 			int price = ScanUtil.nextInt("메뉴 가격 >> ");
 			setString += " MENU_PRICE = '"+price+"' , ";
 		} 
 		
 		setString = setString.substring(0, setString.length() - 2);
-		
 		
 		Map<String, Object> getStr = storeDao.getStoreByUsersNo(user.get("USERS_NO"));
 		
@@ -215,17 +232,17 @@ public class MenuService {
 		if(result > 0) {
 			System.out.println("메뉴 정보가 정상적으로 수정되었습니다.");
 		} else {
-			System.out.println("매장 정보 수정에 실패했습니다. 다시 입력해주세요.");
+			System.out.println("매장 정보 수정에 실패했습니다.");
 		}
 		
-		return View.STORE;
+		return View.MENU_MGMT;
 	}
 	
 	// 메뉴 삭제
 	public View menuMgmtDelete() {
 		PrintUtil.printTitle("메뉴 삭제");
 		
-		String menuName = ScanUtil.nextLine("삭제할 메뉴명 >> ");
+		String menuName = ScanUtil.nextLine("▶ 삭제할 메뉴명 >> ");
 		int result = menuDao.deleteMenu(menuName);
 		
 		if(result > 0) {

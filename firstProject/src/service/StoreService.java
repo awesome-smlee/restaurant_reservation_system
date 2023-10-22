@@ -60,7 +60,7 @@ public class StoreService {
 			System.out.println("4. 예약현황 관리");
 			System.out.println("5. 마이페이지");
 			System.out.println("0. 로그아웃");
-			int num = ScanUtil.nextInt("입력 >> ");
+			int num = ScanUtil.nextInt("▶ 입력 >> ");
 			
 			switch(num) {
 				case 0:
@@ -78,9 +78,9 @@ public class StoreService {
 				case 4:
 					view = View.RESV_MGMT;
 					break;
-//				case 5:
-//					view = View.마이페이지;
-//					break;
+				case 5:
+					view = View.USER_MYPAGE;
+					break;
 			}
 		}
 		
@@ -95,7 +95,7 @@ public class StoreService {
 		System.out.println("2. 매장 수정");
 		System.out.println("0. 뒤로가기");
 		
-		int num = ScanUtil.nextInt("입력 >> ");
+		int num = ScanUtil.nextInt("▶ 입력 >> ");
 		switch(num) {
 			case 0:
 				view = View.STORE;
@@ -138,25 +138,25 @@ public class StoreService {
 
 		// 오픈시간
 		System.out.println("※ 예시) 11:00 -> 1100 ※");
-		String open = ScanUtil.nextLine("오픈 시간 >> ");
+		String open = ScanUtil.nextLine("▶ 오픈 시간 입력 >> ");
 
 		// 브레이크 타임 시작 시간
 		System.out.println("※ 예시) 15:00 -> 1500 ※");
-		String breakStart = ScanUtil.nextLine("브레이크 타임 시작 시간 >> ");
+		String breakStart = ScanUtil.nextLine("▶ 브레이크 타임 시작 시간 입력 >> ");
 
 		// 브레이크 타임 종료 시간
 		System.out.println("※ 예시) 17:00 -> 1700 ※");
-		String breakClose = ScanUtil.nextLine("브레이크 타임 종료 시간 >> ");
+		String breakClose = ScanUtil.nextLine("▶ 브레이크 타임 종료 시간 입력 >> ");
 
 		// 마감시간
 		System.out.println("※ 예시) 21:00 -> 2100 ※");
-		String close = ScanUtil.nextLine("마감 시간 >> ");
+		String close = ScanUtil.nextLine("▶ 마감 시간 입력 >> ");
 
 		// 사업자명
-		String ceo = ScanUtil.nextLine("사업자명 >> ");
+		String ceo = ScanUtil.nextLine("▶ 사업자명 입력 >> ");
 
 		// 사업자번호
-		String businessNum = ScanUtil.nextLine("사업자번호 >> ");
+		String businessNum = ScanUtil.nextLine("▶ 사업자번호 입력 >> ");
 
 		List<Object> param = new ArrayList<Object>();
 		param.add(foodType);
@@ -237,14 +237,14 @@ public class StoreService {
 		
 		
 		// 매장명 수정
-		yesNo = ScanUtil.nextLine("매장명을 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("매장명을 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
-			strName = ScanUtil.nextLine("매장명 >> ");
+			strName = ScanUtil.nextLine("▶ 매장명 입력>> ");
 			setString += " STR_NAME = '" + strName + "', ";
 		}
 
 		// 매장 타입 수정
-		yesNo = ScanUtil.nextLine("매장 타입을 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("매장 타입을 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
 			int type = ScanUtil.nextInt("[1] 한식 [2] 중식 [3] 일식 [4] 양식 [5] 분식 [6] 기타  >> ");
 			foodType = StoreUtil.getStoreType(type);
@@ -252,11 +252,11 @@ public class StoreService {
 		}
 
 		// 매장 전화번호
-		yesNo = ScanUtil.nextLine("매장 전화번호를 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("매장 전화번호를 수정하시겠습니까?(y/n) >> ");
 		if(yesNo.equalsIgnoreCase("y")) {
 			while (true) {
 				System.out.println("※ 예시)(지역번호)-000-0000 ※");
-				String tellNo = ScanUtil.nextLine("매장 전화번호 >> ");
+				String tellNo = ScanUtil.nextLine("▶ 매장 전화번호 입력 >> ");
 
 				if (!matcher.matches()) {
 					System.out.println("전화번호 형식이 올바르지 않습니다. 다시 입력하세요.");
@@ -268,55 +268,55 @@ public class StoreService {
 		}
 
 		// 매장 주소
-		yesNo = ScanUtil.nextLine("매장 주소를 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("매장 주소를 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
-			String address = ScanUtil.nextLine("매장 주소 >> ");
+			String address = ScanUtil.nextLine("▶ 매장 주소 입력 >> ");
 			setString += " STR_ADDRESS = '" + address + "', ";
 		}
 
 		// 오픈 시간
-		yesNo = ScanUtil.nextLine("매장 오픈시간을 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("매장 오픈시간을 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
 			System.out.println("※ 예시) 11:00 -> 1100 ※");
-			String open = ScanUtil.nextLine("오픈시간 >> ");
+			String open = ScanUtil.nextLine("▶ 오픈시간 입력 >> ");
 			setString += " STR_OPEN = '" + open + "', ";
 		}
 
 		// 브레이크 타임 시작 시간
-		yesNo = ScanUtil.nextLine("브레이크 타임 시작 시간을 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("브레이크 타임 시작 시간을 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
 			System.out.println("※ 예시) 15:00 -> 1500 ※");
-			String breakStart = ScanUtil.nextLine("브레이크 타임 시작 시간 >> ");
+			String breakStart = ScanUtil.nextLine("▶ 브레이크 타임 시작 시간 입력 >> ");
 			setString += " STR_BRKSTRT = '" + breakStart + "', ";
 		}
 
 		// 브레이크 타임 종료 시간
-		yesNo = ScanUtil.nextLine("브레이크 타임 종료 시간을 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("브레이크 타임 종료 시간을 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
 			System.out.println("※ 예시) 17:00 -> 1700 ※");
-			String breakClose = ScanUtil.nextLine("브레이크 타임 종료 시간 >> ");
+			String breakClose = ScanUtil.nextLine("▶ 브레이크 타임 종료 시간 입력 >> ");
 			setString += " STR_BRKCLS = '" + breakClose + "', ";
 		}
 
 		// 마감 시간
-		yesNo = ScanUtil.nextLine("마감 시간을 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("마감 시간을 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
 			System.out.println("※ 예시) 21:00 -> 2100 ※");
-			String close = ScanUtil.nextLine("마감시간 >> ");
+			String close = ScanUtil.nextLine("▶ 마감시간 입력 >> ");
 			setString += " STR_CLOSE = '" + close + "', ";
 		}
 
 		// 사업자명
-		yesNo = ScanUtil.nextLine("사업자명을 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("사업자명을 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
-			String ceo = ScanUtil.nextLine("사업자명 >> ");
+			String ceo = ScanUtil.nextLine("▶ 사업자명 입력 >> ");
 			setString += " STR_CEO = '" + ceo + "', ";
 		}
 		
 		// 사업자 번호 수정
-		yesNo = ScanUtil.nextLine("사업자 번호를 수정하시겠습니까? (y/n) >> ");
+		yesNo = ScanUtil.nextLine("사업자 번호를 수정하시겠습니까?(y/n) >> ");
 		if (yesNo.equalsIgnoreCase("y")) {
-			String businessNum = ScanUtil.nextLine("사업자번호 >> ");
+			String businessNum = ScanUtil.nextLine("▶ 사업자번호 입력 >> ");
 			setString += " STR_BN = '" + businessNum + "', ";
 		}
 		

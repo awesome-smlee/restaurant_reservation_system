@@ -38,7 +38,7 @@ public class ReservationService {
 		System.out.println("0. 뒤로가기");
 		System.out.println("1. 예약 현황 조회");
 		
-		int num = ScanUtil.nextInt("입력 >> ");
+		int num = ScanUtil.nextInt("▶ 입력 >> ");
 		switch(num) {
 			case 0:
 				view = View.HOME;
@@ -47,9 +47,7 @@ public class ReservationService {
 				view = View.RESV_MGMT_LIST;
 				break;
 		}
-		
-		return view.STORE;
-		
+		return view;
 	}
 	
 	// 예약 현황 목록
@@ -77,7 +75,8 @@ public class ReservationService {
 			System.out.println("예약된 내역이 없습니다.");
 		}
 		
-		int num = ScanUtil.nextInt("조회할 번호 입력 >> ");
+		System.out.println();
+		int num = ScanUtil.nextInt("▶ 조회할 번호 입력 >> ");
 		Map selectedReservation = getResvList.get(num - 1);
 		Controller.sessionStorage.put("SELECTED_RESERVATION", selectedReservation);
 
@@ -107,7 +106,7 @@ public class ReservationService {
 	    	System.out.println("예약이 존재하지 않습니다.");
 	    }
 	    
-		return view.RESV_MGMT;
+		return view.STORE;
 	}
 	
 	
@@ -129,7 +128,7 @@ public class ReservationService {
 					"   " + rs.get("OM_NAME") + " " + rs.get("TOTAL_QTY") + "개" + " / " + rs.get("TOTAL_PRICE") + "원");
 		}
 		System.out.println("- 요청사항 : " + reservationDao.viewReservation().get("RES_REQ"));
-		System.out.println("--------------------------------");
+		System.out.println("------------------------------------");
 		System.out.println("- 총 금액 : " + reservationDao.totalPriceList(resNo).get("TOTAL_PRICE_SUM")+"원");
 		return View.CUSTOMER;
 	}

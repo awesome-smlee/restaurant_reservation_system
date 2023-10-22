@@ -225,7 +225,7 @@ public class JDBCUtil {
 			ps.setString(6, strNo);
 			int rowsAffected = ps.executeUpdate();
 			if(rowsAffected > 0) {
-				System.out.println("예약이 완료되었습니다.");
+				System.out.println("예약이 완료되었습니다. 곧 맛있는 음식을 준비해드릴게요!");
 			}else {
 				System.out.println("예약에 실패했습니다.");
 			}
@@ -245,7 +245,7 @@ public class JDBCUtil {
 			ps.setString(1, resNo);
 			int rowsAffected = ps.executeUpdate();
 			if(rowsAffected > 0) {
-				System.out.println("예약이 완료되었습니다.");
+				System.out.println("예약이 완료되었습니다. 곧 맛있는 음식을 준비해드릴게요!");
 			}else {
 				System.out.println("예약에 실패했습니다.");
 			}
@@ -266,7 +266,7 @@ public class JDBCUtil {
 			ps.setString(2, strNo);
 			int rowsAffected = ps.executeUpdate();
 				if(rowsAffected > 0) {
-					System.out.println("주문이 성공적으로 추가되었습니다.");
+					System.out.println("주문이 성공적으로 완료되었습니다.");
 				}else {
 					System.out.println("주문 등록에 실패하였습니다.");
 				}
@@ -286,7 +286,7 @@ public class JDBCUtil {
 			ps.setInt(1, strNum);
 			int rowsAffected = ps.executeUpdate();
 				if(rowsAffected > 0) {
-					System.out.println("주문이 성공적으로 추가되었습니다.");
+					System.out.println("주문이 성공적으로 완료되었습니다.");
 				}else {
 					System.out.println("주문 등록에 실패하였습니다.");
 				}

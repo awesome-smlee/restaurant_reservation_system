@@ -37,7 +37,7 @@ public class TableService {
 		System.out.println("1. 테이블 목록");
 		System.out.println("2. 테이블 등록");
 		
-		int num = ScanUtil.nextInt("입력 >> ");
+		int num = ScanUtil.nextInt("▶ 입력 >> ");
 		switch(num) {
 			case 0:
 				view = View.HOME;
@@ -58,12 +58,12 @@ public class TableService {
 		PrintUtil.printTitle("테이블 등록");
 
 		Map user = (Map) Controller.sessionStorage.get("USERS");
-		Map<String, Object> store = tableDao.getStoreInfo(user.get("USERS_NO").toString());
+		Map<String, Object> store = storeDao.getStoreByUsersNo(user.get("USERS_NO").toString());
 		
 		int i=0;
 		while(true) {
 			
-			int strSeat = ScanUtil.nextInt(i + "번 테이블 : 인원수 입력 >> ");
+			int strSeat = ScanUtil.nextInt("▶  "+i + "번 테이블 : 인원수 입력 >> ");
 			
 			List<Object> param = new ArrayList<Object>();
 			param.add(strSeat);
@@ -72,7 +72,7 @@ public class TableService {
 			int cnt = tableDao.createTable(param);
 			if(cnt > 0) {
 				System.out.println("테이블이 정상적으로 등록되었습니다.");
-				String yn = ScanUtil.nextLine("추가로 등록 하시겠습니까? (y/n) >> ");
+				String yn = ScanUtil.nextLine("추가로 등록 하시겠습니까?(y/n) >> ");
 				if("n".equalsIgnoreCase(yn)) {
 					break;
 				} 
@@ -85,27 +85,96 @@ public class TableService {
 		return View.STORE;
 	}
 
-	
 	// 테이블 목록
+	Map selectedTable = null;
 	public View tableMgmtList() {
+		View view = null;
 		PrintUtil.printTitle("테이블 목록");
 		
 		Map user = (Map) Controller.sessionStorage.get("USERS");
 		Map<String, Object> strNo = storeDao.getStoreByUsersNo(user.get("USERS_NO"));
-		List<Map<String, Object>> result = tableDao.getTableList(strNo.get("STR_NO").toString());
+		List<Map<String, Object>> tableList = tableDao.getTableList(strNo.get("STR_NO").toString());
 		
-		if (result != null) {
-		    if (result.size() > 0) {
-		        for (int i = 0; i < result.size(); i++) {
-		            Map<String, Object> map = result.get(i);
-		            System.out.print("테이블 " + map.get("TBL_COUNT") + "-");
-		            System.out.println("인원수:" + map.get("TBL_SEAT"));
+		if (tableList != null) {
+		    if (tableList.size() > 0) {
+		        for (int i = 0; i < tableList.size(); i++) {
+		            Map<String, Object> map = tableList.get(i);
+		            System.out.println(i+1 + ".인원수 : " + map.get("TBL_SEAT"));
 		        }
 		    } else {
 		        System.out.println("테이블 데이터가 존재하지 않습니다.");
 		    }
 		} else {
 		    System.out.println("데이터를 가져오는 데 문제가 발생했습니다.");
+		}
+		
+		int num = ScanUtil.nextInt("조회할 테이블 번호 선택 >> ");
+		selectedTable = tableList.get(num-1);
+		
+		return View.TABLE_MGMT_DETAIL;
+	}
+
+	// 테이블 상세 조회
+	public View tableMgmtDetail() {
+		View view = null;
+		PrintUtil.printTitle("테이블 상세");
+		
+		System.out.println("인원수 : " + selectedTable.get("TBL_SEAT"));
+		
+		 // 메뉴 분기처리
+		System.out.println();
+		System.out.println("0. 뒤로가기");
+		System.out.println("1. 테이블 수정");
+		System.out.println("2. 테이블 삭제");
+		int num = ScanUtil.nextInt("▶ 입력 >> ");
+		switch(num) {
+			case 0:
+				view = View.TABLE_MGMT;
+				break;
+			case 1:
+				view = View.TABLE_MGMT_UPDATE;
+				break;
+			case 2:
+				view = View.TABLE_MGMT_DELETE;
+				break;
+		}
+		return view;
+	}
+	
+	// 테이블 수정
+	public View tableMgmtUpdate() {
+		PrintUtil.printTitle("테이블 수정");
+		String setString = "";
+		if(selectedTable != null) {
+			int strSeat = ScanUtil.nextInt("▶ 인원수 입력 >> ");
+			setString = " TBL_SEAT = '"+strSeat+"' ";
+		}
+		
+		List<Object> param = new ArrayList<Object>();
+		param.add(selectedTable.get("TBL_NO"));
+		
+		int result = tableDao.updateTable(setString, param);
+		System.out.println(result);
+		if(result > 0) {
+			System.out.println("테이블이 정상적으로 수정되었습니다.");
+		} else {
+			System.out.println("테이블 수정에 실패했습니다.");
+		}
+		
+		return View.TABLE_MGMT;
+	}
+	
+	// 테이블 삭제
+	public View tableMgmtDelete() {
+		PrintUtil.printTitle("테이블 삭제");
+		
+		if(selectedTable != null) {
+			int result = tableDao.deleteTable(selectedTable.get("TBL_NO").toString());
+			if(result > 0) {
+				System.out.println("테이블이 정상적으로 삭제되었습니다.");
+			} else {
+				System.out.println("테이블 삭제에 실패했습니다.");
+			}
 		}
 		
 		return View.TABLE_MGMT;

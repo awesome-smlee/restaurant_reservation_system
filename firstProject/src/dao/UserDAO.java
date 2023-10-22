@@ -38,11 +38,19 @@ public class UserDAO {
 		return jdbc.update(sql, param);
 	}
 	
-	// 사용자 정보 수정
+	// 회원 정보 조회
+	public List<Map<String, Object>> userInfoList(String usersNo) {
+		String sql = "SELECT USERS_ID, USERS_PW, USERS_NAME, USERS_HP, USERS_BIRTH " +
+                "FROM USERS " +
+                "WHERE USERS_NO = '"+usersNo+"' ";
+		return jdbc.selectList(sql);
+	}
+	
+	// 회원 정보 수정
 	public int resignUp(String setString, List<Object> param) {
 		String sql = " UPDATE USERS SET ";
 		sql += setString;
-		sql += " WHERE USERS_ID = ? ";
+		sql += " WHERE USERS_NO = ? ";
 		
 		return jdbc.update(sql, param);
 	}
