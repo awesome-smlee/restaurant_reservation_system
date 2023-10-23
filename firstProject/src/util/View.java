@@ -37,7 +37,8 @@ public enum View {
     
     // 고객
     CUSTOMER("고객"),
-    CUSTOMER_RESERVATION("예약 현황");
+    CUSTOMER_RESERVATION("예약 현황"),
+    CUSTOMER_MYPAGE("고객 마이페이지");
     
 	// 예약 현황
    

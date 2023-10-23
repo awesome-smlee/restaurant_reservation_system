@@ -62,7 +62,7 @@ public class OrderMenuDAO {
 	}
 
 	public void updateResno(String resNo, String strNo) {
-		String sql = "UPDATE ORDERMENU SET " + "RES_NO = ? " + "WHERE STR_NO = ?";
+		String sql = "UPDATE ORDERMENU SET " + "RES_NO = ? " + "WHERE STR_NO = ? AND RES_NO IS NULL ";
 		jdbc.updateOrdermenuResno(sql, resNo, strNo);
 	}
 

@@ -1,11 +1,14 @@
 package service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import controller.Controller;
 import dao.CustomerDAO;
 import dao.OrderMenuDAO;
 import dao.ReservationDAO;
+import dao.UserDAO;
 import util.PrintUtil;
 import util.ScanUtil;
 import util.View;
@@ -25,6 +28,7 @@ public class CustomerService {
 	CustomerDAO customerDao = CustomerDAO.getInstance();
 	ReservationDAO reservationDao = ReservationDAO.getInstance();
 	OrderMenuDAO orderMenuDao = OrderMenuDAO.getInstance();
+	UserDAO userDao = UserDAO.getInstance();
 
 	public View list() {
 		PrintUtil.printTitle("매장리스트 & 마이페이지");
@@ -42,7 +46,7 @@ public class CustomerService {
 		System.out.println("-----------------------------");
 		int num = ScanUtil.nextInt("▶ 예약할 매장을 선택해주세요  >> ");
 		if (num == 0) {
-			return View.USER_MYPAGE;
+			return View.CUSTOMER_MYPAGE;
 		}
 
 		// 예약 시작
@@ -122,10 +126,16 @@ public class CustomerService {
 		System.out.println();
 		String resReq = ScanUtil.nextLine("▶ 요청사항을 입력해주세요 >> ");
 
-		// 예약 번호 넣어주기
-		reservationDao.generateResNo(resNo, resPer, resTime, tblNo, resReq, strNo);
+		
+		// USERS_NO 가져오기
+		Map user = (Map)Controller.sessionStorage.get("USERS");
+		BigDecimal usersNoBigDeciaml = (BigDecimal) user.get("USERS_NO");
+		int usersNo = usersNoBigDeciaml.intValue();
+		
+		// 예약 테이블 입력
+		reservationDao.generateResNo(resNo, resPer, resTime, tblNo, resReq, strNo, usersNo);
 		orderMenuDao.updateResno(resNo, strNo);
-
+		
 		return View.CUSTOMER_RESERVATION;
 	}
 }

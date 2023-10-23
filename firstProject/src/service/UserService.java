@@ -141,7 +141,7 @@ public class UserService {
 		int num = ScanUtil.nextInt("▶ 번호 입력 >> ");
 		switch (num) {
 		case 0:
-			view = View.STORE;
+			view = View.HOME;
 			break;
 		case 1:
 			view = View.USER_DETAIL;

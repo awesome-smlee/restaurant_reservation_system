@@ -130,24 +130,14 @@ public class ReservationDAO {
 		return randomString.toString();
 	}
 	
-	public void reservation(String resNo, String resPer, String resTime, int tblNo, String resReq, String strNo) {
-		String sql = "INSERT INTO RESERVATION(RES_NO, RES_PER, RES_TIME, TBL_NO, RES_REQ, STR_NO) VALUES (?, ?, ?, ?, ?, ? )";
-		jdbc.updateReservList(sql, resNo, resPer, resTime, tblNo, resReq, strNo);
+	public void reservation(String resNo, String resPer, String resTime, int tblNo, String resReq, String strNo, int usersNo) {
+		String sql = "INSERT INTO RESERVATION(RES_NO, RES_PER, RES_TIME, TBL_NO, RES_REQ, STR_NO, USERS_NO) VALUES (?, ?, ?, ?, ?, ?, ? ) ";
+		jdbc.updateReservList(sql, resNo, resPer, resTime, tblNo, resReq, strNo, usersNo);
 	}
 	
-	
-	
-	public void generateResNo(String resNo, String resPer, String resTime,  int tblNo, String resReq, String strNo) {
-		reservation(resNo, resPer, resTime, tblNo, resReq, strNo);
+	public void generateResNo(String resNo, String resPer, String resTime,  int tblNo, String resReq, String strNo, int usersNo) {
+		reservation(resNo, resPer, resTime, tblNo, resReq, strNo, usersNo);
 		orderMenuDao.updateResno(resNo, strNo);
-		
 	}
-//	public void viewTable(String strNo) {
-//		List<Map<String, Object>> result = tables(strNo);
-//		for (int i = 0; i < result.size(); i++) { 
-//			Map<String, Object> res = result.get(i);
-//			System.out.print(res.get("TBL_COUNT") + ".("+res.get("TBL_SEAT")+"인석)");
-//			System.out.println();
-//		}
 	
 }

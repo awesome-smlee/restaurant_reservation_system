@@ -23,7 +23,7 @@ public class JDBCUtil {
 		return instance;
 	}
 	private String url = "jdbc:oracle:thin:@localhost:1521:xe";
-	private String user = "pc07";
+	private String user = "project1st";
 	private String pw = "java";
 	
 	private Connection conn = null;
@@ -212,7 +212,7 @@ public class JDBCUtil {
 			if(conn != null) try { conn.close(); } catch(Exception e) {}
 		}
 	}
-	public void updateReservList(String sql,String resNo, String resPer, String resTime, int tblNo, String resReq, String strNo){
+	public void updateReservList(String sql,String resNo, String resPer, String resTime, int tblNo, String resReq, String strNo, int usersNo){
 
 		try {
 			conn = DriverManager.getConnection(url, user, pw);
@@ -223,6 +223,7 @@ public class JDBCUtil {
 			ps.setInt(4, tblNo);
 			ps.setString(5, resReq);
 			ps.setString(6, strNo);
+			ps.setInt(7, usersNo);
 			int rowsAffected = ps.executeUpdate();
 			if(rowsAffected > 0) {
 				System.out.println("예약이 완료되었습니다. 곧 맛있는 음식을 준비해드릴게요!");

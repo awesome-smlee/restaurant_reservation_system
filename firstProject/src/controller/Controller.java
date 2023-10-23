@@ -129,6 +129,8 @@ public class Controller {
 			case CUSTOMER_RESERVATION:
 				view = reservationService.reservationList();
 				break;
+			case CUSTOMER_MYPAGE:
+				view = reservationService.reservationList();
 			}
 		}
 	}
@@ -137,11 +139,11 @@ public class Controller {
 
 		System.out.println();
 		String welcomeMessage =
-		        "W   W  EEEEE  L      CCCC  OOO  M   M  EEEEE\n" +
-		        "W   W  E      L     C      O   O MM MM  E\n" +
-		        "W W W  EEE    L     C      O   O M M M  EEE\n" +
-		        "W W W  E      L     C      O   O M   M  E\n" +
-		        " W W   EEEEE  LLLLL  CCCC  OOO  M   M  EEEEE\n";
+		        "W   W  EEEEE  L      CCCC  OOO   M   M  EEEEE\n" +
+		        "W   W  E      L     C     O   O  MM MM  E\n" +
+		        "W W W  EEE    L     C     O   O  M M M  EEE\n" +
+		        "W W W  E      L     C     O   O  M   M  E\n" +
+		        " W W   EEEEE  LLLLL  CCCC  OOO   M   M  EEEEE\n";
 
         System.out.println(welcomeMessage);
     	System.out.println("=========[[식당 주문 예약 시스템]]=========");
